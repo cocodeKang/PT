@@ -1,1 +1,1189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>운동관리 사이트</title>
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #11182b;
+      --panel-2: #16203a;
+      --line: #24314d;
+      --text: #e8eefc;
+      --muted: #a9b7d3;
+      --accent: #60a5fa;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --shadow: 0 20px 45px rgba(0,0,0,.28);
+      --radius: 22px;
+    }
 
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(96,165,250,.18), transparent 30%),
+        radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 30%),
+        linear-gradient(180deg, #09101d 0%, #0c1323 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(1320px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: .95rem;
+    }
+
+    .status-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      padding: 10px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #64748b;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+    }
+
+    .dot.online { background: var(--accent-2); }
+    .dot.local { background: var(--warning); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+
+    .col {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .card-head {
+      padding: 18px 20px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: .92rem;
+      margin-top: 4px;
+    }
+
+    .card-body { padding: 16px 20px 20px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.025);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 108px;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-bottom: 10px;
+    }
+
+    .metric .value {
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .metric .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .chart-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .chart-box h3 {
+      font-size: .95rem;
+      margin: 0 0 12px;
+    }
+
+    .sparkline {
+      width: 100%;
+      height: 160px;
+      display: block;
+      background: linear-gradient(180deg, rgba(96,165,250,.04), transparent);
+      border-radius: 14px;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      font-size: .94rem;
+    }
+
+    .summary-row .name { color: var(--muted); }
+    .summary-row .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+    }
+    .summary-row .bar > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #34d399);
+      border-radius: inherit;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button, .btn {
+      border: 0;
+      background: #1e293b;
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+      border: 1px solid rgba(255,255,255,.07);
+    }
+
+    button:hover, .btn:hover {
+      transform: translateY(-1px);
+      background: #24324a;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
+
+    .btn-primary:hover { background: linear-gradient(135deg, #2b6ff0, #2358df); }
+
+    .btn-success {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
+
+    .btn-ghost { background: rgba(255,255,255,.03); }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding: 12px 13px;
+      outline: none;
+      font: inherit;
+    }
+
+    input::placeholder, textarea::placeholder { color: #7c8aa8; }
+    textarea { min-height: 160px; resize: vertical; }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .label {
+      display: block;
+      font-size: .88rem;
+      margin-bottom: 7px;
+      color: var(--muted);
+    }
+
+    .round-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .round-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .round-title {
+      font-weight: 800;
+      font-size: .98rem;
+    }
+
+    .records {
+      display: grid;
+      gap: 12px;
+      max-height: 860px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .record {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.025);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .record-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .record-date {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(96,165,250,.1);
+      color: #b9d8ff;
+      font-size: .82rem;
+      border: 1px solid rgba(96,165,250,.18);
+    }
+
+    .record-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .mini {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: 12px;
+      padding: 10px 10px;
+    }
+
+    .mini .k {
+      color: var(--muted);
+      font-size: .82rem;
+      margin-bottom: 5px;
+    }
+
+    .mini .v {
+      font-weight: 800;
+      font-size: .98rem;
+    }
+
+    .record-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 12px 2px;
+      font-size: .95rem;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .config-area {
+      display: none;
+      margin-top: 12px;
+      border-top: 1px dashed rgba(255,255,255,.12);
+      padding-top: 14px;
+    }
+
+    .config-area.open { display: block; }
+
+    .notice {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.55;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .88rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 18px, 1000px); }
+      .metrics, .grid-4, .grid-3, .grid-2, .chart-grid, .record-grid {
+        grid-template-columns: 1fr;
+      }
+      .summary-row { grid-template-columns: 90px 1fr auto; }
+      .card-head, .card-body { padding-left: 14px; padding-right: 14px; }
+      button, .btn { width: 100%; }
+      .status-group, .toolbar { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">💪</div>
+        <div>
+          <h1>운동관리 사이트</h1>
+          <div class="subtitle">GitHub Pages 배포용 단일 HTML · 로컬 저장 + Firebase Firestore 실시간 동기화</div>
+        </div>
+      </div>
+      <div class="status-group">
+        <div class="pill"><span class="dot" id="syncDot"></span><span id="syncText">로컬 모드</span></div>
+        <div class="pill"><span>기록 수</span><strong id="recordCount">0</strong></div>
+        <div class="pill"><span>마지막 동기화</span><strong id="lastSync">-</strong></div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="col">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">대시보드</h2>
+              <div class="card-desc">전체 운동 흐름과 최고 기록을 한 번에 봅니다.</div>
+            </div>
+            <div class="toolbar">
+              <button class="btn-ghost" id="seedBtn">초기 데이터 다시 불러오기</button>
+              <button class="btn-ghost" id="exportBtn">JSON 백업</button>
+              <label class="btn btn-ghost" for="importInput">JSON 복원</label>
+              <input type="file" id="importInput" accept="application/json" hidden />
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="metrics">
+              <div class="metric">
+                <div class="label">총 운동일</div>
+                <div class="value" id="mDays">0</div>
+                <div class="sub">기록이 있는 날짜 수</div>
+              </div>
+              <div class="metric">
+                <div class="label">총 라운드</div>
+                <div class="value" id="mRounds">0</div>
+                <div class="sub">입력된 세트 합계</div>
+              </div>
+              <div class="metric">
+                <div class="label">최근 운동일</div>
+                <div class="value" id="mRecent">-</div>
+                <div class="sub">마지막 기록 날짜</div>
+              </div>
+              <div class="metric">
+                <div class="label">러닝 합계</div>
+                <div class="value" id="mRunning">0</div>
+                <div class="sub">초 기준 합계</div>
+              </div>
+            </div>
+
+            <div class="chart-grid">
+              <div class="chart-box">
+                <h3>스쿼트 최근 추이</h3>
+                <svg class="sparkline" id="chartSquat" viewBox="0 0 320 160" preserveAspectRatio="none"></svg>
+              </div>
+              <div class="chart-box">
+                <h3>턱걸이 최근 추이</h3>
+                <svg class="sparkline" id="chartPullup" viewBox="0 0 320 160" preserveAspectRatio="none"></svg>
+              </div>
+            </div>
+
+            <div class="summary-list" id="bestSummary"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">기록 입력 / 수정</h2>
+              <div class="card-desc">날짜 하나당 문서 1개입니다. 같은 날짜로 저장하면 덮어쓰기됩니다.</div>
+            </div>
+            <div class="toolbar">
+              <button class="btn-ghost" id="newBtn">새 입력</button>
+              <button class="btn-success" id="saveBtn">저장</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="grid-2">
+              <div>
+                <label class="label" for="dateInput">날짜</label>
+                <input type="date" id="dateInput" />
+              </div>
+              <div>
+                <label class="label" for="runningInput">러닝(초)</label>
+                <input type="number" id="runningInput" min="0" step="1" placeholder="예: 600" />
+              </div>
+            </div>
+
+            <div style="height:12px"></div>
+
+            <div class="grid-3" id="roundsWrap"></div>
+
+            <div style="height:12px"></div>
+            <div class="toolbar">
+              <button class="btn-ghost" id="addRoundBtn">라운드 추가</button>
+              <button class="btn-ghost" id="removeRoundBtn">마지막 라운드 삭제</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Firebase 연결</h2>
+              <div class="card-desc">설정 저장 후 연결하면 GitHub Pages에서도 실시간 동기화됩니다.</div>
+            </div>
+            <div class="toolbar">
+              <button class="btn-ghost" id="toggleConfigBtn">설정 펼치기</button>
+              <button class="btn-primary" id="connectBtn">Firebase 연결</button>
+              <button class="btn-ghost" id="disconnectBtn">로컬 모드</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="notice">
+              이 사이트는 기본적으로 로컬 저장으로 바로 동작합니다. Firebase를 쓰려면 아래에 <strong>firebaseConfig JSON</strong>과 <strong>컬렉션 경로</strong>를 넣고 연결하세요.
+            </div>
+
+            <div class="config-area" id="configArea">
+              <div style="height:12px"></div>
+              <label class="label" for="firebaseConfigInput">firebaseConfig JSON</label>
+              <textarea id="firebaseConfigInput" placeholder='{
+  "apiKey": "...",
+  "authDomain": "...",
+  "projectId": "...",
+  "storageBucket": "...",
+  "messagingSenderId": "...",
+  "appId": "..."
+}'></textarea>
+
+              <div style="height:12px"></div>
+              <div class="grid-2">
+                <div>
+                  <label class="label" for="collectionPathInput">Firestore 컬렉션 경로</label>
+                  <input id="collectionPathInput" placeholder="예: workoutRecords" value="workoutRecords" />
+                </div>
+                <div>
+                  <label class="label" for="siteTitleInput">사이트 제목</label>
+                  <input id="siteTitleInput" placeholder="운동관리 사이트" value="운동관리 사이트" />
+                </div>
+              </div>
+              <div style="height:12px"></div>
+              <div class="toolbar">
+                <button class="btn-success" id="saveConfigBtn">설정 저장</button>
+                <button class="btn-danger" id="clearConfigBtn">설정 삭제</button>
+              </div>
+              <div style="height:10px"></div>
+              <div class="helper">
+                권장 문서 ID는 날짜(YYYY-MM-DD)입니다. 현재 코드도 그 방식으로 저장됩니다.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">최근 기록</h2>
+              <div class="card-desc">수정하려면 수정 버튼을 누르세요.</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="records" id="records"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="footer-note">GitHub Pages용 static HTML · Firebase 연결 전에도 사용 가능</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+
+    const INITIAL_DATA = [
+      {"id":"2026-02-05","date":"2026-02-05","running":null,"rounds":[{"squat":70,"pullup":3,"dips":20,"pushup":40,"plank":75,"round":1}]},
+      {"id":"2026-02-06","date":"2026-02-06","running":null,"rounds":[{"squat":51,"pullup":5,"dips":25,"pushup":32,"plank":90,"deadhang":7,"negpull":5,"round":1},{"squat":51,"pullup":1,"dips":17,"pushup":22,"plank":80,"round":2}]},
+      {"id":"2026-02-09","date":"2026-02-09","running":null,"rounds":[{"squat":60,"pullup":6,"dips":25,"pushup":30,"round":1}]},
+      {"id":"2026-02-10","date":"2026-02-10","running":null,"rounds":[{"squat":60,"pullup":5,"dips":20,"pushup":40,"plank":70,"round":1},{"squat":50,"pullup":5,"round":2}]},
+      {"id":"2026-02-11","date":"2026-02-11","running":null,"rounds":[{"squat":70,"pullup":7,"dips":25,"pushup":40,"plank":75,"deadhang":10,"negpull":5,"round":1}]},
+      {"id":"2026-02-12","date":"2026-02-12","running":null,"rounds":[{"squat":70,"pullup":7,"dips":25,"pushup":40,"plank":60,"deadhang":15,"negpull":5,"round":1},{"squat":60,"pullup":2,"dips":15,"pushup":30,"plank":60,"deadhang":12,"negpull":4,"round":2}]},
+      {"id":"2026-02-20","date":"2026-02-20","running":null,"rounds":[{"squat":60,"pullup":8,"dips":30,"pushup":40,"plank":50,"round":1}]},
+      {"id":"2026-02-23","date":"2026-02-23","running":null,"rounds":[{"squat":50,"pullup":6,"dips":20,"pushup":30,"plank":70,"deadhang":15,"negpull":5,"round":1},{"squat":50,"pullup":2,"dips":15,"pushup":30,"plank":60,"round":2}]},
+      {"id":"2026-02-24","date":"2026-02-24","running":null,"rounds":[{"squat":65,"pullup":7,"dips":30,"pushup":41,"plank":120,"deadhang":18,"negpull":7,"round":1}]},
+      {"id":"2026-03-03","date":"2026-03-03","running":240,"rounds":[{"squat":63,"pullup":7,"dips":25,"pushup":40,"plank":100,"deadhang":24,"negpull":7,"round":1}]},
+      {"id":"2026-03-04","date":"2026-03-04","running":450,"rounds":[{"squat":66,"pullup":7,"dips":26,"pushup":41,"deadhang":22,"negpull":7,"round":1}]},
+      {"id":"2026-03-05","date":"2026-03-05","running":420,"rounds":[{"squat":65,"pullup":7,"dips":27,"pushup":42,"plank":70,"deadhang":25,"negpull":7,"round":1}]},
+      {"id":"2026-03-06","date":"2026-03-06","running":630,"rounds":[{"squat":60,"pullup":6,"round":1}]},
+      {"id":"2026-03-09","date":"2026-03-09","running":null,"rounds":[{"squat":60,"pullup":7,"dips":3,"pushup":20,"round":1}]},
+      {"id":"2026-03-10","date":"2026-03-10","running":null,"rounds":[{"squat":70,"pullup":8,"dips":24,"pushup":40,"plank":100,"deadhang":29,"negpull":7,"round":1}]},
+      {"id":"2026-03-12","date":"2026-03-12","running":null,"rounds":[{"squat":71,"pullup":8,"dips":26,"pushup":41,"plank":120,"deadhang":30,"negpull":8,"round":1}]},
+      {"id":"2026-03-16","date":"2026-03-16","running":60,"rounds":[{"squat":75,"pullup":8,"dips":19,"pushup":50,"plank":120,"deadhang":25,"negpull":7,"round":1}]}
+    ];
+
+    const STORAGE_KEY = 'workout-manager-v2';
+    const CONFIG_KEY = 'workout-manager-firebase-config';
+
+    const EXERCISES = [
+      { key: 'squat', label: '스쿼트' },
+      { key: 'pullup', label: '턱걸이' },
+      { key: 'dips', label: '딥스' },
+      { key: 'pushup', label: '팔굽혀' },
+      { key: 'plank', label: '플랭크(초)' },
+      { key: 'deadhang', label: '데드행(초)' },
+      { key: 'negpull', label: '턱걸네' },
+    ];
+
+    const el = (id) => document.getElementById(id);
+    const recordsEl = el('records');
+    const roundsWrap = el('roundsWrap');
+    const configArea = el('configArea');
+    const syncDot = el('syncDot');
+    const syncText = el('syncText');
+    const lastSync = el('lastSync');
+
+    let state = {
+      records: [],
+      currentEditId: null,
+      roundCount: 3,
+      cloud: {
+        enabled: false,
+        app: null,
+        db: null,
+        unsubscribe: null,
+      }
+    };
+
+    function clone(v) {
+      return JSON.parse(JSON.stringify(v));
+    }
+
+    function nowTime() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+    }
+
+    function parseNum(v) {
+      if (v === '' || v === null || v === undefined) return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function sortRecords(arr) {
+      return [...arr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    }
+
+    function saveLocal() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records));
+      lastSync.textContent = nowTime();
+    }
+
+    function loadLocal() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        state.records = sortRecords(clone(INITIAL_DATA));
+        saveLocal();
+        return;
+      }
+      try {
+        state.records = sortRecords(JSON.parse(raw));
+      } catch (e) {
+        state.records = sortRecords(clone(INITIAL_DATA));
+        saveLocal();
+      }
+    }
+
+    function saveConfig() {
+      const payload = {
+        firebaseConfigText: el('firebaseConfigInput').value.trim(),
+        collectionPath: el('collectionPathInput').value.trim() || 'workoutRecords',
+        siteTitle: el('siteTitleInput').value.trim() || '운동관리 사이트',
+      };
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(payload));
+      document.title = payload.siteTitle;
+      document.querySelector('h1').textContent = payload.siteTitle;
+      alert('Firebase 설정을 저장했습니다.');
+    }
+
+    function loadConfig() {
+      const raw = localStorage.getItem(CONFIG_KEY);
+      if (!raw) return;
+      try {
+        const cfg = JSON.parse(raw);
+        el('firebaseConfigInput').value = cfg.firebaseConfigText || '';
+        el('collectionPathInput').value = cfg.collectionPath || 'workoutRecords';
+        el('siteTitleInput').value = cfg.siteTitle || '운동관리 사이트';
+        document.title = cfg.siteTitle || '운동관리 사이트';
+        document.querySelector('h1').textContent = cfg.siteTitle || '운동관리 사이트';
+      } catch (e) {}
+    }
+
+    function clearConfig() {
+      localStorage.removeItem(CONFIG_KEY);
+      el('firebaseConfigInput').value = '';
+      el('collectionPathInput').value = 'workoutRecords';
+      el('siteTitleInput').value = '운동관리 사이트';
+      alert('저장된 Firebase 설정을 삭제했습니다.');
+    }
+
+    function setSyncStatus(mode, text) {
+      syncDot.className = 'dot';
+      if (mode === 'cloud') syncDot.classList.add('online');
+      else syncDot.classList.add('local');
+      syncText.textContent = text;
+      lastSync.textContent = nowTime();
+    }
+
+    function createRoundCard(idx) {
+      const wrap = document.createElement('div');
+      wrap.className = 'round-card';
+      wrap.dataset.round = idx;
+
+      const fields = EXERCISES.map(item => `
+        <div>
+          <label class="label" for="${item.key}_${idx}">${item.label}</label>
+          <input type="number" min="0" step="1" id="${item.key}_${idx}" data-round="${idx}" data-key="${item.key}" placeholder="0" />
+        </div>
+      `).join('');
+
+      wrap.innerHTML = `
+        <div class="round-head">
+          <div class="round-title">라운드 ${idx}</div>
+          <div class="tag">세트 기록</div>
+        </div>
+        <div class="grid-2">${fields}</div>
+      `;
+      return wrap;
+    }
+
+    function renderRoundInputs() {
+      roundsWrap.innerHTML = '';
+      for (let i = 1; i <= state.roundCount; i++) roundsWrap.appendChild(createRoundCard(i));
+    }
+
+    function clearForm() {
+      state.currentEditId = null;
+      el('dateInput').value = new Date().toISOString().slice(0, 10);
+      el('runningInput').value = '';
+      state.roundCount = 3;
+      renderRoundInputs();
+    }
+
+    function readForm() {
+      const date = el('dateInput').value;
+      if (!date) {
+        alert('날짜를 입력하세요.');
+        return null;
+      }
+      const rounds = [];
+      for (let i = 1; i <= state.roundCount; i++) {
+        const obj = { round: i };
+        let hasValue = false;
+        for (const item of EXERCISES) {
+          const v = parseNum(el(`${item.key}_${i}`).value);
+          if (v !== null) {
+            obj[item.key] = v;
+            hasValue = true;
+          }
+        }
+        if (hasValue) rounds.push(obj);
+      }
+      return {
+        id: date,
+        date,
+        running: parseNum(el('runningInput').value),
+        rounds,
+      };
+    }
+
+    function fillForm(record) {
+      state.currentEditId = record.id;
+      el('dateInput').value = record.date;
+      el('runningInput').value = record.running ?? '';
+      state.roundCount = Math.max(3, record.rounds?.length || 1);
+      renderRoundInputs();
+      (record.rounds || []).forEach((round, idx) => {
+        for (const item of EXERCISES) {
+          const target = el(`${item.key}_${idx + 1}`);
+          if (target) target.value = round[item.key] ?? '';
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function summarizeRecord(record) {
+      const totals = {};
+      for (const item of EXERCISES) totals[item.key] = 0;
+      for (const round of record.rounds || []) {
+        for (const item of EXERCISES) {
+          totals[item.key] += Number(round[item.key] || 0);
+        }
+      }
+      return totals;
+    }
+
+    function formatMetric(key, value) {
+      if (!value) return '0';
+      if (['plank', 'deadhang', 'running'].includes(key)) return `${value}`;
+      return `${value}`;
+    }
+
+    function renderRecords() {
+      const list = sortRecords(state.records);
+      el('recordCount').textContent = list.length;
+      recordsEl.innerHTML = '';
+      if (!list.length) {
+        recordsEl.innerHTML = '<div class="empty">아직 기록이 없습니다.</div>';
+        return;
+      }
+      for (const record of list) {
+        const sums = summarizeRecord(record);
+        const box = document.createElement('div');
+        box.className = 'record';
+        box.innerHTML = `
+          <div class="record-top">
+            <div>
+              <div class="record-date">${record.date}</div>
+              <div class="card-desc">라운드 ${(record.rounds || []).length}개${record.running ? ` · 러닝 ${record.running}초` : ''}</div>
+            </div>
+            <div class="record-actions">
+              <button class="btn-ghost" data-edit="${record.id}">수정</button>
+              <button class="btn-danger" data-delete="${record.id}">삭제</button>
+            </div>
+          </div>
+          <div class="record-grid">
+            ${EXERCISES.map(item => `
+              <div class="mini">
+                <div class="k">${item.label}</div>
+                <div class="v">${formatMetric(item.key, sums[item.key])}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        recordsEl.appendChild(box);
+      }
+
+      recordsEl.querySelectorAll('[data-edit]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const record = state.records.find(r => r.id === btn.dataset.edit);
+          if (record) fillForm(record);
+        });
+      });
+      recordsEl.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.delete;
+          if (!confirm(`${id} 기록을 삭제할까요?`)) return;
+          await removeRecord(id);
+        });
+      });
+    }
+
+    function drawSparkline(svgId, values, color = '#60a5fa') {
+      const svg = el(svgId);
+      const width = 320;
+      const height = 160;
+      svg.innerHTML = '';
+      if (!values.length) {
+        svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="#94a3b8" font-size="14">데이터 없음</text>`;
+        return;
+      }
+      const max = Math.max(...values, 1);
+      const min = Math.min(...values, 0);
+      const span = Math.max(max - min, 1);
+      const step = values.length === 1 ? width : width / (values.length - 1);
+
+      const points = values.map((v, i) => {
+        const x = i * step;
+        const y = height - ((v - min) / span) * (height - 20) - 10;
+        return `${x},${y}`;
+      }).join(' ');
+
+      const pathParts = values.map((v, i) => {
+        const x = i * step;
+        const y = height - ((v - min) / span) * (height - 20) - 10;
+        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+      }).join(' ');
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="grad-${svgId}" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="${color}" stop-opacity=".38" />
+            <stop offset="100%" stop-color="${color}" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="320" height="160" fill="transparent"></rect>
+        <path d="${pathParts} L 320 160 L 0 160 Z" fill="url(#grad-${svgId})"></path>
+        <polyline fill="none" stroke="${color}" stroke-width="3" points="${points}" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        ${values.map((v, i) => {
+          const x = i * step;
+          const y = height - ((v - min) / span) * (height - 20) - 10;
+          return `<circle cx="${x}" cy="${y}" r="4.5" fill="${color}"></circle>`;
+        }).join('')}
+      `;
+    }
+
+    function renderDashboard() {
+      const list = sortRecords(state.records);
+      const totalRounds = list.reduce((sum, r) => sum + (r.rounds?.length || 0), 0);
+      const totalRunning = list.reduce((sum, r) => sum + Number(r.running || 0), 0);
+
+      el('mDays').textContent = list.length;
+      el('mRounds').textContent = totalRounds;
+      el('mRecent').textContent = list[0]?.date || '-';
+      el('mRunning').textContent = totalRunning;
+
+      const bests = {};
+      const totals = {};
+      const counts = {};
+      for (const item of EXERCISES) {
+        bests[item.key] = 0;
+        totals[item.key] = 0;
+        counts[item.key] = 0;
+      }
+
+      const squatTrend = [];
+      const pullupTrend = [];
+
+      [...list].reverse().forEach(record => {
+        const sums = summarizeRecord(record);
+        squatTrend.push(sums.squat || 0);
+        pullupTrend.push(sums.pullup || 0);
+        for (const item of EXERCISES) {
+          const value = sums[item.key] || 0;
+          bests[item.key] = Math.max(bests[item.key], value);
+          if (value > 0) {
+            totals[item.key] += value;
+            counts[item.key] += 1;
+          }
+        }
+      });
+
+      drawSparkline('chartSquat', squatTrend, '#60a5fa');
+      drawSparkline('chartPullup', pullupTrend, '#34d399');
+
+      const maxBest = Math.max(...Object.values(bests), 1);
+      const summary = el('bestSummary');
+      summary.innerHTML = EXERCISES.map(item => {
+        const avg = counts[item.key] ? (totals[item.key] / counts[item.key]).toFixed(1) : '0.0';
+        const best = bests[item.key] || 0;
+        const w = Math.max(6, Math.round((best / maxBest) * 100));
+        return `
+          <div class="summary-row">
+            <div class="name">${item.label}</div>
+            <div class="bar"><span style="width:${w}%"></span></div>
+            <div>최고 ${best} · 평균 ${avg}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function upsertRecord(record) {
+      state.records = sortRecords([...state.records.filter(r => r.id !== record.id), record]);
+      saveLocal();
+      renderAll();
+
+      if (state.cloud.enabled && state.cloud.db) {
+        const path = el('collectionPathInput').value.trim() || 'workoutRecords';
+        await setDoc(doc(collection(state.cloud.db, path), record.id), record);
+        setSyncStatus('cloud', 'Firebase 실시간 연결 중');
+      }
+    }
+
+    async function removeRecord(id) {
+      state.records = sortRecords(state.records.filter(r => r.id !== id));
+      saveLocal();
+      renderAll();
+
+      if (state.cloud.enabled && state.cloud.db) {
+        const path = el('collectionPathInput').value.trim() || 'workoutRecords';
+        await deleteDoc(doc(collection(state.cloud.db, path), id));
+        setSyncStatus('cloud', 'Firebase 실시간 연결 중');
+      }
+    }
+
+    async function connectFirebase() {
+      const raw = el('firebaseConfigInput').value.trim();
+      const path = el('collectionPathInput').value.trim() || 'workoutRecords';
+      if (!raw) {
+        alert('firebaseConfig JSON을 먼저 넣어주세요.');
+        return;
+      }
+
+      let config;
+      try {
+        config = JSON.parse(raw);
+      } catch (e) {
+        alert('firebaseConfig JSON 형식이 올바르지 않습니다.');
+        return;
+      }
+
+      try {
+        if (state.cloud.unsubscribe) {
+          state.cloud.unsubscribe();
+          state.cloud.unsubscribe = null;
+        }
+
+        const app = getApps().length ? getApps()[0] : initializeApp(config);
+        const db = getFirestore(app);
+
+        state.cloud.app = app;
+        state.cloud.db = db;
+        state.cloud.enabled = true;
+
+        const q = query(collection(db, path), orderBy('date', 'desc'));
+        state.cloud.unsubscribe = onSnapshot(q, (snap) => {
+          const items = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+          state.records = sortRecords(items);
+          saveLocal();
+          renderAll();
+          setSyncStatus('cloud', 'Firebase 실시간 연결 중');
+        }, (error) => {
+          console.error(error);
+          setSyncStatus('local', '로컬 모드 (연결 오류)');
+          alert('Firebase 연결 중 오류가 발생했습니다. Firestore 규칙과 컬렉션 경로를 확인하세요.');
+        });
+
+        setSyncStatus('cloud', 'Firebase 연결 중');
+      } catch (error) {
+        console.error(error);
+        alert('Firebase 초기화에 실패했습니다. 설정값을 확인하세요.');
+      }
+    }
+
+    function disconnectFirebase() {
+      if (state.cloud.unsubscribe) state.cloud.unsubscribe();
+      state.cloud.unsubscribe = null;
+      state.cloud.enabled = false;
+      state.cloud.db = null;
+      setSyncStatus('local', '로컬 모드');
+      renderAll();
+    }
+
+    function exportJson() {
+      const blob = new Blob([JSON.stringify(state.records, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `운동기록_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importJson(file) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (!Array.isArray(parsed)) throw new Error('배열 아님');
+          state.records = sortRecords(parsed);
+          saveLocal();
+          renderAll();
+          if (state.cloud.enabled && state.cloud.db) {
+            for (const record of state.records) {
+              await setDoc(doc(collection(state.cloud.db, el('collectionPathInput').value.trim() || 'workoutRecords'), record.id), record);
+            }
+          }
+          alert('JSON 복원이 완료되었습니다.');
+        } catch (e) {
+          alert('JSON 파일 형식이 올바르지 않습니다.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function bindEvents() {
+      el('newBtn').addEventListener('click', clearForm);
+      el('addRoundBtn').addEventListener('click', () => {
+        state.roundCount += 1;
+        renderRoundInputs();
+      });
+      el('removeRoundBtn').addEventListener('click', () => {
+        if (state.roundCount <= 1) return;
+        state.roundCount -= 1;
+        renderRoundInputs();
+      });
+
+      el('saveBtn').addEventListener('click', async () => {
+        const record = readForm();
+        if (!record) return;
+        await upsertRecord(record);
+        alert('저장했습니다.');
+      });
+
+      el('toggleConfigBtn').addEventListener('click', () => {
+        configArea.classList.toggle('open');
+      });
+      el('saveConfigBtn').addEventListener('click', saveConfig);
+      el('clearConfigBtn').addEventListener('click', clearConfig);
+      el('connectBtn').addEventListener('click', connectFirebase);
+      el('disconnectBtn').addEventListener('click', disconnectFirebase);
+      el('exportBtn').addEventListener('click', exportJson);
+      el('importInput').addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (file) importJson(file);
+        e.target.value = '';
+      });
+
+      el('seedBtn').addEventListener('click', () => {
+        if (!confirm('현재 로컬 기록을 초기 데이터로 덮어쓸까요?')) return;
+        state.records = sortRecords(clone(INITIAL_DATA));
+        saveLocal();
+        renderAll();
+        alert('초기 데이터를 다시 불러왔습니다.');
+      });
+    }
+
+    function renderAll() {
+      renderRecords();
+      renderDashboard();
+    }
+
+    function init() {
+      loadConfig();
+      loadLocal();
+      renderRoundInputs();
+      clearForm();
+      bindEvents();
+      renderAll();
+      setSyncStatus('local', '로컬 모드');
+    }
+
+    init();
+  </script>
+</body>
+</html>
