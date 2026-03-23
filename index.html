@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -5,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>운동관리 사이트</title>
   <meta name="theme-color" content="#0f172a" />
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --bg: #0b1020;
@@ -20,7 +22,6 @@
       --shadow: 0 20px 45px rgba(0,0,0,.28);
       --radius: 22px;
     }
-
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
@@ -32,22 +33,8 @@
       color: var(--text);
       min-height: 100vh;
     }
-
-    .wrap {
-      width: min(1320px, calc(100% - 28px));
-      margin: 0 auto;
-      padding: 22px 0 56px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
+    .wrap { width: min(1320px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 56px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
     .brand { display: flex; align-items: center; gap: 14px; }
     .logo {
       width: 50px; height: 50px; border-radius: 16px;
@@ -56,144 +43,106 @@
     }
     h1 { margin: 0; font-size: clamp(1.4rem, 2vw, 2rem); }
     .subtitle { color: var(--muted); margin-top: 4px; font-size: .95rem; }
-
-    .status-group, .toolbar {
-      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-    }
+    .status-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .pill {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 999px;
-      padding: 10px 14px;
-      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--line); background: rgba(255,255,255,.03); border-radius: 999px;
+      padding: 10px 14px; display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: .92rem;
     }
     .dot {
-      width: 10px; height: 10px; border-radius: 999px;
-      background: #64748b; box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+      width: 10px; height: 10px; border-radius: 999px; background: #64748b;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
     }
     .dot.online { background: var(--accent-2); }
     .dot.local { background: var(--warning); }
-
     .layout { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
     .col { display: grid; gap: 18px; align-content: start; }
     .card {
       background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
       backdrop-filter: blur(12px);
     }
     .card-head {
-      padding: 18px 20px 10px;
-      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 10px; display: flex; align-items: center; justify-content: space-between;
       gap: 12px; flex-wrap: wrap;
     }
     .card-title { font-size: 1.05rem; font-weight: 700; margin: 0; }
     .card-desc { color: var(--muted); font-size: .92rem; margin-top: 4px; }
     .card-body { padding: 16px 20px 20px; }
-
     .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .metric {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.025);
+      border: 1px solid var(--line); background: rgba(255,255,255,.025);
       border-radius: 18px; padding: 16px; min-height: 108px;
     }
     .metric .label { color: var(--muted); font-size: .88rem; margin-bottom: 10px; }
     .metric .value { font-size: clamp(1.35rem, 2vw, 2rem); font-weight: 800; letter-spacing: -.02em; }
     .metric .sub { margin-top: 8px; color: var(--muted); font-size: .88rem; }
-
     .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
     .chart-box {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px;
-      background: rgba(255,255,255,.02);
+      border: 1px solid var(--line); border-radius: 18px; padding: 14px; background: rgba(255,255,255,.02);
     }
     .chart-box h3 { font-size: .95rem; margin: 0 0 12px; }
     .sparkline {
       width: 100%; height: 160px; display: block;
-      background: linear-gradient(180deg, rgba(96,165,250,.04), transparent);
-      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(96,165,250,.04), transparent); border-radius: 14px;
     }
-
     .summary-list { display: grid; gap: 10px; margin-top: 12px; }
-    .summary-row {
-      display: grid; grid-template-columns: 120px 1fr auto;
-      gap: 10px; align-items: center; font-size: .94rem;
-    }
+    .summary-row { display: grid; grid-template-columns: 120px 1fr auto; gap: 10px; align-items: center; font-size: .94rem; }
     .summary-row .name { color: var(--muted); }
-    .summary-row .bar {
-      height: 10px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden;
-    }
+    .summary-row .bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; }
     .summary-row .bar > span {
       display: block; height: 100%; width: 0;
-      background: linear-gradient(90deg, var(--accent), #34d399);
-      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), #34d399); border-radius: inherit;
     }
-
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     button, .btn {
-      border: 0; background: #1e293b; color: var(--text);
-      padding: 11px 14px; border-radius: 14px; font-weight: 700; cursor: pointer;
-      transition: .18s ease; border: 1px solid rgba(255,255,255,.07);
-      text-decoration: none;
+      border: 0; background: #1e293b; color: var(--text); padding: 11px 14px;
+      border-radius: 14px; font-weight: 700; cursor: pointer; transition: .18s ease;
+      border: 1px solid rgba(255,255,255,.07);
     }
     button:hover, .btn:hover { transform: translateY(-1px); background: #24324a; }
     .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .btn-primary:hover { background: linear-gradient(135deg, #2b6ff0, #2358df); }
     .btn-success { background: linear-gradient(135deg, #16a34a, #15803d); }
     .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); }
     .btn-ghost { background: rgba(255,255,255,.03); }
-
     input, textarea, select {
       width: 100%; border: 1px solid var(--line); border-radius: 14px;
-      background: rgba(255,255,255,.03); color: var(--text);
-      padding: 12px 13px; outline: none; font: inherit;
+      background: rgba(255,255,255,.03); color: var(--text); padding: 12px 13px;
+      outline: none; font: inherit;
     }
     input::placeholder, textarea::placeholder { color: #7c8aa8; }
-    textarea { min-height: 180px; resize: vertical; }
-
+    textarea { min-height: 170px; resize: vertical; }
     .grid-2, .grid-3, .grid-4 { display: grid; gap: 12px; }
     .grid-2 { grid-template-columns: repeat(2, 1fr); }
     .grid-3 { grid-template-columns: repeat(3, 1fr); }
     .grid-4 { grid-template-columns: repeat(4, 1fr); }
     .label { display: block; font-size: .88rem; margin-bottom: 7px; color: var(--muted); }
-
     .round-card {
-      border: 1px solid var(--line); border-radius: 18px; padding: 14px;
-      background: rgba(255,255,255,.02);
+      border: 1px solid var(--line); border-radius: 18px; padding: 14px; background: rgba(255,255,255,.02);
     }
-    .round-head {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 10px; margin-bottom: 12px;
-    }
+    .round-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
     .round-title { font-weight: 800; font-size: .98rem; }
-
     .records { display: grid; gap: 12px; max-height: 860px; overflow: auto; padding-right: 4px; }
     .record {
-      border: 1px solid var(--line); border-radius: 18px;
-      background: rgba(255,255,255,.025); padding: 14px; display: grid; gap: 10px;
+      border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.025);
+      padding: 14px; display: grid; gap: 10px;
     }
-    .record-top {
-      display: flex; justify-content: space-between; gap: 12px;
-      align-items: center; flex-wrap: wrap;
-    }
+    .record-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
     .record-date { font-size: 1rem; font-weight: 800; }
     .tag {
-      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
-      border-radius: 999px; background: rgba(96,165,250,.1); color: #b9d8ff;
-      font-size: .82rem; border: 1px solid rgba(96,165,250,.18);
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px;
+      background: rgba(96,165,250,.1); color: #b9d8ff; font-size: .82rem; border: 1px solid rgba(96,165,250,.18);
     }
     .record-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .mini {
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.05);
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.05);
       border-radius: 12px; padding: 10px 10px;
     }
     .mini .k { color: var(--muted); font-size: .82rem; margin-bottom: 5px; }
     .mini .v { font-weight: 800; font-size: .98rem; }
     .record-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
     .empty { color: var(--muted); padding: 12px 2px; font-size: .95rem; }
     .helper { color: var(--muted); font-size: .9rem; line-height: 1.6; }
     .config-area { display: none; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,.12); padding-top: 14px; }
@@ -203,7 +152,7 @@
       background: rgba(255,255,255,.03); color: var(--muted); font-size: .92rem; line-height: 1.55;
     }
     .footer-note { margin-top: 18px; color: var(--muted); font-size: .88rem; text-align: center; }
-
+    .tiny-note { color: var(--muted); font-size: .82rem; }
     @media (max-width: 1100px) {
       .layout { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: repeat(2, 1fr); }
@@ -225,11 +174,11 @@
         <div class="logo">💪</div>
         <div>
           <h1>운동관리 사이트</h1>
-          <div class="subtitle">GitHub Pages 배포용 단일 HTML · 로컬 저장 + Firebase Firestore 실시간 동기화</div>
+          <div class="subtitle">GitHub Pages 배포용 단일 HTML · Firebase 자동 연결 · 로컬 백업 · 엑셀 다운로드</div>
         </div>
       </div>
       <div class="status-group">
-        <div class="pill"><span class="dot" id="syncDot"></span><span id="syncText">로컬 모드</span></div>
+        <div class="pill"><span class="dot" id="syncDot"></span><span id="syncText">연결 준비 중</span></div>
         <div class="pill"><span>기록 수</span><strong id="recordCount">0</strong></div>
         <div class="pill"><span>마지막 동기화</span><strong id="lastSync">-</strong></div>
       </div>
@@ -245,8 +194,8 @@
             </div>
             <div class="toolbar">
               <button class="btn-ghost" id="seedBtn">초기 데이터 다시 불러오기</button>
-              <button class="btn-ghost" id="pushLocalBtn">로컬 기록 클라우드로 밀어넣기</button>
-              <button class="btn-ghost" id="exportBtn">JSON 백업</button>
+              <button class="btn-ghost" id="exportJsonBtn">JSON 백업</button>
+              <button class="btn-primary" id="exportExcelBtn">엑셀 다운로드</button>
               <label class="btn btn-ghost" for="importInput">JSON 복원</label>
               <input type="file" id="importInput" accept="application/json" hidden />
             </div>
@@ -294,7 +243,7 @@
           <div class="card-head">
             <div>
               <h2 class="card-title">기록 입력 / 수정</h2>
-              <div class="card-desc">날짜 하나당 문서 1개입니다. 같은 날짜로 저장하면 덮어쓰기됩니다.</div>
+              <div class="card-desc">같은 날짜로 저장하면 해당 날짜 기록이 덮어쓰기됩니다.</div>
             </div>
             <div class="toolbar">
               <button class="btn-ghost" id="newBtn">새 입력</button>
@@ -314,7 +263,9 @@
             </div>
 
             <div style="height:12px"></div>
+
             <div class="grid-3" id="roundsWrap"></div>
+
             <div style="height:12px"></div>
             <div class="toolbar">
               <button class="btn-ghost" id="addRoundBtn">라운드 추가</button>
@@ -328,31 +279,24 @@
         <section class="card">
           <div class="card-head">
             <div>
-              <h2 class="card-title">Firebase 연결</h2>
-              <div class="card-desc">설정 저장 후 연결하면 GitHub Pages에서도 실시간 동기화됩니다.</div>
+              <h2 class="card-title">Firebase 자동 연결 설정</h2>
+              <div class="card-desc">페이지가 열리면 저장된 설정 또는 기본 설정으로 자동 연결을 시도합니다.</div>
             </div>
             <div class="toolbar">
               <button class="btn-ghost" id="toggleConfigBtn">설정 펼치기</button>
-              <button class="btn-primary" id="connectBtn">Firebase 연결</button>
+              <button class="btn-primary" id="connectBtn">지금 다시 연결</button>
               <button class="btn-ghost" id="disconnectBtn">로컬 모드</button>
+              <button class="btn-success" id="pushCloudBtn">로컬 → Firebase 업로드</button>
             </div>
           </div>
           <div class="card-body">
             <div class="notice">
-              기본은 로컬 저장으로 동작합니다. Firebase를 쓰려면 아래에 <strong>firebaseConfig</strong>와 <strong>컬렉션 경로</strong>를 넣고 연결하세요. 연결 후 컬렉션이 비어 있으면 로컬 데이터를 그대로 업로드할 수도 있습니다.
+              저장된 설정이 있으면 자동으로 Firestore 실시간 리스너를 연결합니다. 원격 데이터가 있으면 그것을 기준으로 불러오고, 비어 있으면 현재 로컬 데이터를 업로드합니다.
             </div>
-
             <div class="config-area" id="configArea">
               <div style="height:12px"></div>
-              <label class="label" for="firebaseConfigInput">firebaseConfig JSON 또는 JS 객체 형태</label>
-              <textarea id="firebaseConfigInput" placeholder='{
-  "apiKey": "YOUR_API_KEY",
-  "authDomain": "YOUR_PROJECT.firebaseapp.com",
-  "projectId": "YOUR_PROJECT_ID",
-  "storageBucket": "YOUR_PROJECT.firebasestorage.app",
-  "messagingSenderId": "1234567890",
-  "appId": "1:1234567890:web:abcdef123456"
-}'></textarea>
+              <label class="label" for="firebaseConfigInput">firebaseConfig</label>
+              <textarea id="firebaseConfigInput" spellcheck="false"></textarea>
 
               <div style="height:12px"></div>
               <div class="grid-2">
@@ -372,7 +316,10 @@
               </div>
               <div style="height:10px"></div>
               <div class="helper">
-                문서 ID는 날짜(YYYY-MM-DD)를 권장합니다. 현재 코드도 그 방식으로 저장됩니다. 한 Firebase 앱에 이미 연결되어 있을 때는 config가 바뀌면 페이지를 한 번 새로고침한 뒤 다시 연결하세요.
+                문서 ID는 기본적으로 날짜(YYYY-MM-DD)입니다. 날짜 표시는 화면에서 항상 <strong>yyyy-mm-dd(요일)</strong> 형식으로 보입니다.
+              </div>
+              <div class="tiny-note" style="margin-top:8px;">
+                예시: 2026-03-23(월)
               </div>
             </div>
           </div>
@@ -382,7 +329,7 @@
           <div class="card-head">
             <div>
               <h2 class="card-title">최근 기록</h2>
-              <div class="card-desc">수정하려면 수정 버튼을 누르세요.</div>
+              <div class="card-desc">수정 버튼을 누르면 위 입력 폼으로 불러옵니다.</div>
             </div>
           </div>
           <div class="card-body">
@@ -392,12 +339,24 @@
       </div>
     </div>
 
-    <div class="footer-note">GitHub Pages용 static HTML · Firebase 연결 전에도 사용 가능</div>
+    <div class="footer-note">GitHub Pages용 static HTML · Firebase 연결 실패 시 자동으로 로컬 모드로 전환</div>
   </div>
 
   <script type="module">
     import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
-    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+    import {
+      getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs
+    } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+
+    const DEFAULT_FIREBASE_CONFIG_TEXT = `{
+  "apiKey": "AIzaSyB-iWsEfB2nfFdqgZTnOzFErA-CR7UYUWU",
+  "authDomain": "cocodekang-pt.firebaseapp.com",
+  "projectId": "cocodekang-pt",
+  "storageBucket": "cocodekang-pt.firebasestorage.app",
+  "messagingSenderId": "186879142379",
+  "appId": "1:186879142379:web:76d5e07a9e8f4e0f09d1ae",
+  "measurementId": "G-4B3XC08BR4"
+}`;
 
     const INITIAL_DATA = [
       {"id":"2026-02-05","date":"2026-02-05","running":null,"rounds":[{"squat":70,"pullup":3,"dips":20,"pushup":40,"plank":75,"round":1}]},
@@ -420,7 +379,9 @@
     ];
 
     const STORAGE_KEY = 'workout-manager-v3';
-    const CONFIG_KEY = 'workout-manager-firebase-config';
+    const CONFIG_KEY = 'workout-manager-firebase-config-v3';
+    const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+
     const EXERCISES = [
       { key: 'squat', label: '스쿼트' },
       { key: 'pullup', label: '턱걸이' },
@@ -443,20 +404,39 @@
       records: [],
       currentEditId: null,
       roundCount: 3,
-      cloud: { enabled: false, app: null, db: null, unsubscribe: null }
+      cloud: {
+        enabled: false,
+        app: null,
+        db: null,
+        unsubscribe: null,
+        isApplyingSnapshot: false,
+      }
     };
 
-    const clone = (v) => JSON.parse(JSON.stringify(v));
-    const nowTime = () => {
+    function clone(v) {
+      return JSON.parse(JSON.stringify(v));
+    }
+
+    function nowTime() {
       const d = new Date();
       return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
-    };
-    const parseNum = (v) => {
+    }
+
+    function parseNum(v) {
       if (v === '' || v === null || v === undefined) return null;
       const n = Number(v);
       return Number.isFinite(n) ? n : null;
-    };
-    const sortRecords = (arr) => [...arr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    }
+
+    function sortRecords(arr) {
+      return [...arr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    }
+
+    function formatDateDisplay(dateStr) {
+      if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr || '-';
+      const d = new Date(`${dateStr}T00:00:00`);
+      return `${dateStr}(${WEEKDAYS[d.getDay()]})`;
+    }
 
     function saveLocal() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records));
@@ -472,47 +452,62 @@
       }
       try {
         state.records = sortRecords(JSON.parse(raw));
-      } catch {
+      } catch (e) {
         state.records = sortRecords(clone(INITIAL_DATA));
         saveLocal();
       }
     }
 
-    function saveConfig() {
-      const payload = {
+    function setSiteTitle(title) {
+      const safeTitle = title?.trim() || '운동관리 사이트';
+      document.title = safeTitle;
+      document.querySelector('h1').textContent = safeTitle;
+    }
+
+    function getConfigPayload() {
+      return {
         firebaseConfigText: el('firebaseConfigInput').value.trim(),
         collectionPath: el('collectionPathInput').value.trim() || 'workoutRecords',
         siteTitle: el('siteTitleInput').value.trim() || '운동관리 사이트',
       };
-      localStorage.setItem(CONFIG_KEY, JSON.stringify(payload));
-      applySiteTitle(payload.siteTitle);
-      alert('Firebase 설정을 저장했습니다.');
     }
 
-    function applySiteTitle(title) {
-      const finalTitle = title || '운동관리 사이트';
-      document.title = finalTitle;
-      document.querySelector('h1').textContent = finalTitle;
+    function saveConfig(showAlert = true) {
+      const payload = getConfigPayload();
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(payload));
+      setSiteTitle(payload.siteTitle);
+      if (showAlert) alert('Firebase 설정을 저장했습니다.');
     }
 
     function loadConfig() {
       const raw = localStorage.getItem(CONFIG_KEY);
-      if (!raw) return;
+      if (!raw) {
+        el('firebaseConfigInput').value = DEFAULT_FIREBASE_CONFIG_TEXT;
+        el('collectionPathInput').value = 'workoutRecords';
+        el('siteTitleInput').value = '운동관리 사이트';
+        setSiteTitle('운동관리 사이트');
+        return;
+      }
       try {
         const cfg = JSON.parse(raw);
-        el('firebaseConfigInput').value = cfg.firebaseConfigText || '';
+        el('firebaseConfigInput').value = cfg.firebaseConfigText || DEFAULT_FIREBASE_CONFIG_TEXT;
         el('collectionPathInput').value = cfg.collectionPath || 'workoutRecords';
         el('siteTitleInput').value = cfg.siteTitle || '운동관리 사이트';
-        applySiteTitle(cfg.siteTitle || '운동관리 사이트');
-      } catch {}
+        setSiteTitle(cfg.siteTitle || '운동관리 사이트');
+      } catch (e) {
+        el('firebaseConfigInput').value = DEFAULT_FIREBASE_CONFIG_TEXT;
+        el('collectionPathInput').value = 'workoutRecords';
+        el('siteTitleInput').value = '운동관리 사이트';
+        setSiteTitle('운동관리 사이트');
+      }
     }
 
     function clearConfig() {
       localStorage.removeItem(CONFIG_KEY);
-      el('firebaseConfigInput').value = '';
+      el('firebaseConfigInput').value = DEFAULT_FIREBASE_CONFIG_TEXT;
       el('collectionPathInput').value = 'workoutRecords';
       el('siteTitleInput').value = '운동관리 사이트';
-      applySiteTitle('운동관리 사이트');
+      setSiteTitle('운동관리 사이트');
       alert('저장된 Firebase 설정을 삭제했습니다.');
     }
 
@@ -523,37 +518,48 @@
       lastSync.textContent = nowTime();
     }
 
-    function getCurrentDraft() {
-      const date = el('dateInput').value;
-      const running = parseNum(el('runningInput').value);
-      const rounds = [];
+    function snapshotCurrentFormValues() {
+      const values = {
+        date: el('dateInput').value,
+        running: el('runningInput').value,
+        rounds: []
+      };
       for (let i = 1; i <= state.roundCount; i++) {
-        const obj = { round: i };
-        let hasValue = false;
+        const roundObj = {};
         for (const item of EXERCISES) {
-          const input = el(`${item.key}_${i}`);
-          if (!input) continue;
-          const v = parseNum(input.value);
-          if (v !== null) {
-            obj[item.key] = v;
-            hasValue = true;
-          }
+          const target = el(`${item.key}_${i}`);
+          roundObj[item.key] = target ? target.value : '';
         }
-        if (hasValue) rounds.push(obj);
+        values.rounds.push(roundObj);
       }
-      return { id: date || null, date: date || '', running, rounds };
+      return values;
+    }
+
+    function applyFormValues(values) {
+      if (!values) return;
+      if (values.date !== undefined) el('dateInput').value = values.date || '';
+      if (values.running !== undefined) el('runningInput').value = values.running || '';
+      (values.rounds || []).forEach((round, idx) => {
+        const i = idx + 1;
+        for (const item of EXERCISES) {
+          const target = el(`${item.key}_${i}`);
+          if (target) target.value = round[item.key] ?? '';
+        }
+      });
     }
 
     function createRoundCard(idx) {
       const wrap = document.createElement('div');
       wrap.className = 'round-card';
       wrap.dataset.round = idx;
+
       const fields = EXERCISES.map(item => `
         <div>
           <label class="label" for="${item.key}_${idx}">${item.label}</label>
           <input type="number" min="0" step="1" id="${item.key}_${idx}" data-round="${idx}" data-key="${item.key}" placeholder="0" />
         </div>
       `).join('');
+
       wrap.innerHTML = `
         <div class="round-head">
           <div class="round-title">라운드 ${idx}</div>
@@ -564,63 +570,75 @@
       return wrap;
     }
 
-    function fillRoundInputs(rounds = []) {
-      rounds.forEach((round, idx) => {
-        EXERCISES.forEach(item => {
-          const target = el(`${item.key}_${idx + 1}`);
-          if (target) target.value = round[item.key] ?? '';
-        });
-      });
-    }
-
-    function renderRoundInputs(preserve = null) {
-      const draft = preserve || getCurrentDraft();
+    function renderRoundInputs(preservedValues = null) {
       roundsWrap.innerHTML = '';
       for (let i = 1; i <= state.roundCount; i++) roundsWrap.appendChild(createRoundCard(i));
-      if (draft) {
-        if (draft.date) el('dateInput').value = draft.date;
-        el('runningInput').value = draft.running ?? '';
-        fillRoundInputs(draft.rounds || []);
-      }
+      if (preservedValues) applyFormValues(preservedValues);
     }
 
     function clearForm() {
       state.currentEditId = null;
-      state.roundCount = 3;
       el('dateInput').value = new Date().toISOString().slice(0, 10);
       el('runningInput').value = '';
-      renderRoundInputs({ id: null, date: el('dateInput').value, running: null, rounds: [] });
+      state.roundCount = 3;
+      renderRoundInputs();
     }
 
     function readForm() {
-      const draft = getCurrentDraft();
-      if (!draft.date) {
+      const date = el('dateInput').value;
+      if (!date) {
         alert('날짜를 입력하세요.');
         return null;
       }
+      const rounds = [];
+      for (let i = 1; i <= state.roundCount; i++) {
+        const obj = { round: i };
+        let hasValue = false;
+        for (const item of EXERCISES) {
+          const v = parseNum(el(`${item.key}_${i}`).value);
+          if (v !== null) {
+            obj[item.key] = v;
+            hasValue = true;
+          }
+        }
+        if (hasValue) rounds.push(obj);
+      }
       return {
-        id: draft.date,
-        date: draft.date,
-        running: draft.running,
-        rounds: draft.rounds,
+        id: date,
+        date,
+        running: parseNum(el('runningInput').value),
+        rounds,
       };
     }
 
     function fillForm(record) {
       state.currentEditId = record.id;
-      state.roundCount = Math.max(3, record.rounds?.length || 1);
       el('dateInput').value = record.date;
       el('runningInput').value = record.running ?? '';
-      renderRoundInputs(record);
+      state.roundCount = Math.max(3, record.rounds?.length || 1);
+      renderRoundInputs();
+      (record.rounds || []).forEach((round, idx) => {
+        for (const item of EXERCISES) {
+          const target = el(`${item.key}_${idx + 1}`);
+          if (target) target.value = round[item.key] ?? '';
+        }
+      });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function summarizeRecord(record) {
-      const totals = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
+      const totals = {};
+      for (const item of EXERCISES) totals[item.key] = 0;
       for (const round of record.rounds || []) {
-        for (const item of EXERCISES) totals[item.key] += Number(round[item.key] || 0);
+        for (const item of EXERCISES) {
+          totals[item.key] += Number(round[item.key] || 0);
+        }
       }
       return totals;
+    }
+
+    function formatMetric(key, value) {
+      return String(value || 0);
     }
 
     function renderRecords() {
@@ -638,7 +656,7 @@
         box.innerHTML = `
           <div class="record-top">
             <div>
-              <div class="record-date">${record.date}</div>
+              <div class="record-date">${formatDateDisplay(record.date)}</div>
               <div class="card-desc">라운드 ${(record.rounds || []).length}개${record.running ? ` · 러닝 ${record.running}초` : ''}</div>
             </div>
             <div class="record-actions">
@@ -650,13 +668,14 @@
             ${EXERCISES.map(item => `
               <div class="mini">
                 <div class="k">${item.label}</div>
-                <div class="v">${sums[item.key] || 0}</div>
+                <div class="v">${formatMetric(item.key, sums[item.key])}</div>
               </div>
             `).join('')}
           </div>
         `;
         recordsEl.appendChild(box);
       }
+
       recordsEl.querySelectorAll('[data-edit]').forEach(btn => {
         btn.addEventListener('click', () => {
           const record = state.records.find(r => r.id === btn.dataset.edit);
@@ -666,7 +685,7 @@
       recordsEl.querySelectorAll('[data-delete]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.dataset.delete;
-          if (!confirm(`${id} 기록을 삭제할까요?`)) return;
+          if (!confirm(`${formatDateDisplay(id)} 기록을 삭제할까요?`)) return;
           await removeRecord(id);
         });
       });
@@ -674,7 +693,8 @@
 
     function drawSparkline(svgId, values, color = '#60a5fa') {
       const svg = el(svgId);
-      const width = 320, height = 160;
+      const width = 320;
+      const height = 160;
       svg.innerHTML = '';
       if (!values.length) {
         svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="#94a3b8" font-size="14">데이터 없음</text>`;
@@ -694,6 +714,7 @@
         const y = height - ((v - min) / span) * (height - 20) - 10;
         return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
       }).join(' ');
+
       svg.innerHTML = `
         <defs>
           <linearGradient id="grad-${svgId}" x1="0" x2="0" y1="0" y2="1">
@@ -701,6 +722,7 @@
             <stop offset="100%" stop-color="${color}" stop-opacity="0" />
           </linearGradient>
         </defs>
+        <rect x="0" y="0" width="320" height="160" fill="transparent"></rect>
         <path d="${pathParts} L 320 160 L 0 160 Z" fill="url(#grad-${svgId})"></path>
         <polyline fill="none" stroke="${color}" stroke-width="3" points="${points}" stroke-linecap="round" stroke-linejoin="round"></polyline>
         ${values.map((v, i) => {
@@ -718,12 +740,18 @@
 
       el('mDays').textContent = list.length;
       el('mRounds').textContent = totalRounds;
-      el('mRecent').textContent = list[0]?.date || '-';
+      el('mRecent').textContent = list[0]?.date ? formatDateDisplay(list[0].date) : '-';
       el('mRunning').textContent = totalRunning;
 
-      const bests = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
-      const totals = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
-      const counts = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
+      const bests = {};
+      const totals = {};
+      const counts = {};
+      for (const item of EXERCISES) {
+        bests[item.key] = 0;
+        totals[item.key] = 0;
+        counts[item.key] = 0;
+      }
+
       const squatTrend = [];
       const pullupTrend = [];
 
@@ -745,7 +773,8 @@
       drawSparkline('chartPullup', pullupTrend, '#34d399');
 
       const maxBest = Math.max(...Object.values(bests), 1);
-      el('bestSummary').innerHTML = EXERCISES.map(item => {
+      const summary = el('bestSummary');
+      summary.innerHTML = EXERCISES.map(item => {
         const avg = counts[item.key] ? (totals[item.key] / counts[item.key]).toFixed(1) : '0.0';
         const best = bests[item.key] || 0;
         const w = Math.max(6, Math.round((best / maxBest) * 100));
@@ -759,10 +788,16 @@
       }).join('');
     }
 
+    function renderAll() {
+      renderRecords();
+      renderDashboard();
+    }
+
     async function upsertRecord(record) {
       state.records = sortRecords([...state.records.filter(r => r.id !== record.id), record]);
       saveLocal();
       renderAll();
+
       if (state.cloud.enabled && state.cloud.db) {
         const path = el('collectionPathInput').value.trim() || 'workoutRecords';
         await setDoc(doc(collection(state.cloud.db, path), record.id), record);
@@ -774,6 +809,7 @@
       state.records = sortRecords(state.records.filter(r => r.id !== id));
       saveLocal();
       renderAll();
+
       if (state.cloud.enabled && state.cloud.db) {
         const path = el('collectionPathInput').value.trim() || 'workoutRecords';
         await deleteDoc(doc(collection(state.cloud.db, path), id));
@@ -781,21 +817,22 @@
       }
     }
 
-    function parseFirebaseConfig(raw) {
+    function parseFirebaseConfig(text) {
+      if (!text.trim()) throw new Error('empty');
       try {
-        return JSON.parse(raw);
-      } catch {
+        return JSON.parse(text);
+      } catch (e) {
         try {
-          return Function(`"use strict"; return (${raw});`)();
-        } catch {
+          return Function(`"use strict"; return (${text});`)();
+        } catch (e2) {
           throw new Error('invalid-config');
         }
       }
     }
 
-    async function pushLocalToCloud() {
+    async function pushLocalToCloud(showAlert = true) {
       if (!(state.cloud.enabled && state.cloud.db)) {
-        alert('먼저 Firebase를 연결하세요.');
+        if (showAlert) alert('먼저 Firebase가 연결되어야 합니다.');
         return;
       }
       const path = el('collectionPathInput').value.trim() || 'workoutRecords';
@@ -803,22 +840,24 @@
         await setDoc(doc(collection(state.cloud.db, path), record.id), record);
       }
       setSyncStatus('cloud', 'Firebase 실시간 연결 중');
-      alert('현재 로컬 기록을 Firebase에 업로드했습니다.');
+      if (showAlert) alert('현재 로컬 기록을 Firebase에 업로드했습니다.');
     }
 
-    async function connectFirebase() {
+    async function connectFirebase({silent = false} = {}) {
       const raw = el('firebaseConfigInput').value.trim();
       const path = el('collectionPathInput').value.trim() || 'workoutRecords';
       if (!raw) {
-        alert('firebaseConfig를 먼저 넣어주세요.');
+        if (!silent) alert('firebaseConfig를 먼저 입력하세요.');
+        setSyncStatus('local', '로컬 모드');
         return;
       }
 
       let config;
       try {
         config = parseFirebaseConfig(raw);
-      } catch {
-        alert('firebaseConfig 형식이 올바르지 않습니다. JSON 또는 JS 객체 형태로 넣어주세요.');
+      } catch (e) {
+        if (!silent) alert('firebaseConfig 형식이 올바르지 않습니다.');
+        setSyncStatus('local', '로컬 모드');
         return;
       }
 
@@ -828,29 +867,21 @@
           state.cloud.unsubscribe = null;
         }
 
-        let app;
-        if (getApps().length) app = getApp();
-        else app = initializeApp(config);
-
+        const app = getApps().length ? getApp() : initializeApp(config);
         const db = getFirestore(app);
+
         state.cloud.app = app;
         state.cloud.db = db;
         state.cloud.enabled = true;
 
-        const colRef = collection(db, path);
-        const initialSnapshot = await getDocs(colRef);
-        if (initialSnapshot.empty && state.records.length) {
-          const shouldUpload = confirm('Firebase 컬렉션이 비어 있습니다. 현재 로컬 기록을 먼저 업로드할까요?');
-          if (shouldUpload) {
-            for (const record of state.records) {
-              await setDoc(doc(colRef, record.id), record);
-            }
-          }
-        }
+        const q = query(collection(db, path), orderBy('date', 'desc'));
 
-        const q = query(colRef, orderBy('date', 'desc'));
-        state.cloud.unsubscribe = onSnapshot(q, (snap) => {
+        state.cloud.unsubscribe = onSnapshot(q, async (snap) => {
           const items = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+          if (items.length === 0 && state.records.length > 0) {
+            await pushLocalToCloud(false);
+            return;
+          }
           state.records = sortRecords(items);
           saveLocal();
           renderAll();
@@ -858,33 +889,112 @@
         }, (error) => {
           console.error(error);
           disconnectFirebase(false);
-          alert('Firebase 연결 중 오류가 발생했습니다. Firestore 규칙과 컬렉션 경로를 확인하세요.');
+          if (!silent) alert('Firebase 연결 오류입니다. Firestore 규칙과 컬렉션 경로를 확인하세요.');
         });
 
         setSyncStatus('cloud', 'Firebase 연결 중');
       } catch (error) {
         console.error(error);
-        alert('Firebase 초기화에 실패했습니다. 설정값을 확인하세요.');
+        disconnectFirebase(false);
+        if (!silent) alert('Firebase 초기화에 실패했습니다.');
       }
     }
 
-    function disconnectFirebase(render = true) {
+    function disconnectFirebase(showRender = true) {
       if (state.cloud.unsubscribe) state.cloud.unsubscribe();
       state.cloud.unsubscribe = null;
       state.cloud.enabled = false;
       state.cloud.db = null;
       setSyncStatus('local', '로컬 모드');
-      if (render) renderAll();
+      if (showRender) renderAll();
     }
 
     function exportJson() {
       const blob = new Blob([JSON.stringify(state.records, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      a.href = url;
+      a.href = URL.createObjectURL(blob);
       a.download = `운동기록_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(a.href);
+    }
+
+    function buildExcelSheets() {
+      const wideRows = [];
+      const roundRows = [];
+      const summaryRows = [];
+
+      for (const record of sortRecords(state.records)) {
+        const sums = summarizeRecord(record);
+        const row = {
+          id: record.id,
+          날짜: record.date,
+          날짜표시: formatDateDisplay(record.date),
+          러닝초: record.running ?? '',
+          라운드수: record.rounds?.length || 0
+        };
+        EXERCISES.forEach(item => row[`${item.label}_합계`] = sums[item.key] || 0);
+        wideRows.push(row);
+
+        (record.rounds || []).forEach(round => {
+          const rr = {
+            id: record.id,
+            날짜: record.date,
+            날짜표시: formatDateDisplay(record.date),
+            라운드: round.round ?? ''
+          };
+          EXERCISES.forEach(item => rr[item.label] = round[item.key] ?? '');
+          roundRows.push(rr);
+        });
+      }
+
+      const bests = {};
+      const totals = {};
+      const counts = {};
+      EXERCISES.forEach(item => {
+        bests[item.key] = 0;
+        totals[item.key] = 0;
+        counts[item.key] = 0;
+      });
+
+      state.records.forEach(record => {
+        const sums = summarizeRecord(record);
+        EXERCISES.forEach(item => {
+          const value = sums[item.key] || 0;
+          bests[item.key] = Math.max(bests[item.key], value);
+          if (value > 0) {
+            totals[item.key] += value;
+            counts[item.key] += 1;
+          }
+        });
+      });
+
+      EXERCISES.forEach(item => {
+        summaryRows.push({
+          항목: item.label,
+          최고기록: bests[item.key] || 0,
+          평균기록: counts[item.key] ? Number((totals[item.key] / counts[item.key]).toFixed(1)) : 0
+        });
+      });
+
+      return { wideRows, roundRows, summaryRows };
+    }
+
+    function exportExcel() {
+      if (!window.XLSX) {
+        alert('엑셀 라이브러리를 불러오지 못했습니다.');
+        return;
+      }
+      const { wideRows, roundRows, summaryRows } = buildExcelSheets();
+      const wb = XLSX.utils.book_new();
+      const ws1 = XLSX.utils.json_to_sheet(wideRows);
+      const ws2 = XLSX.utils.json_to_sheet(roundRows);
+      const ws3 = XLSX.utils.json_to_sheet(summaryRows);
+
+      XLSX.utils.book_append_sheet(wb, ws1, '기록요약');
+      XLSX.utils.book_append_sheet(wb, ws2, '라운드상세');
+      XLSX.utils.book_append_sheet(wb, ws3, '최고기록');
+
+      XLSX.writeFileXLSX(wb, `운동기록_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
     function importJson(file) {
@@ -892,18 +1002,13 @@
       reader.onload = async () => {
         try {
           const parsed = JSON.parse(reader.result);
-          if (!Array.isArray(parsed)) throw new Error('not-array');
+          if (!Array.isArray(parsed)) throw new Error('배열 아님');
           state.records = sortRecords(parsed);
           saveLocal();
           renderAll();
-          if (state.cloud.enabled && state.cloud.db) {
-            const path = el('collectionPathInput').value.trim() || 'workoutRecords';
-            for (const record of state.records) {
-              await setDoc(doc(collection(state.cloud.db, path), record.id), record);
-            }
-          }
+          if (state.cloud.enabled && state.cloud.db) await pushLocalToCloud(false);
           alert('JSON 복원이 완료되었습니다.');
-        } catch {
+        } catch (e) {
           alert('JSON 파일 형식이 올바르지 않습니다.');
         }
       };
@@ -912,61 +1017,68 @@
 
     function bindEvents() {
       el('newBtn').addEventListener('click', clearForm);
+
       el('addRoundBtn').addEventListener('click', () => {
-        const draft = getCurrentDraft();
+        const preserved = snapshotCurrentFormValues();
         state.roundCount += 1;
-        renderRoundInputs(draft);
+        renderRoundInputs(preserved);
       });
+
       el('removeRoundBtn').addEventListener('click', () => {
         if (state.roundCount <= 1) return;
-        const draft = getCurrentDraft();
-        draft.rounds = draft.rounds.slice(0, Math.max(0, state.roundCount - 1));
+        const preserved = snapshotCurrentFormValues();
+        preserved.rounds = preserved.rounds.slice(0, -1);
         state.roundCount -= 1;
-        renderRoundInputs(draft);
+        renderRoundInputs(preserved);
       });
+
       el('saveBtn').addEventListener('click', async () => {
         const record = readForm();
         if (!record) return;
         await upsertRecord(record);
         alert('저장했습니다.');
       });
+
       el('toggleConfigBtn').addEventListener('click', () => configArea.classList.toggle('open'));
-      el('saveConfigBtn').addEventListener('click', saveConfig);
+      el('saveConfigBtn').addEventListener('click', async () => {
+        saveConfig();
+        await connectFirebase();
+      });
       el('clearConfigBtn').addEventListener('click', clearConfig);
-      el('connectBtn').addEventListener('click', connectFirebase);
+      el('connectBtn').addEventListener('click', () => connectFirebase());
       el('disconnectBtn').addEventListener('click', () => disconnectFirebase(true));
-      el('exportBtn').addEventListener('click', exportJson);
-      el('pushLocalBtn').addEventListener('click', pushLocalToCloud);
+      el('pushCloudBtn').addEventListener('click', () => pushLocalToCloud(true));
+      el('exportJsonBtn').addEventListener('click', exportJson);
+      el('exportExcelBtn').addEventListener('click', exportExcel);
+
       el('importInput').addEventListener('change', (e) => {
         const file = e.target.files?.[0];
         if (file) importJson(file);
         e.target.value = '';
       });
+
       el('seedBtn').addEventListener('click', async () => {
-        if (!confirm('현재 로컬 기록을 초기 데이터로 덮어쓸까요?')) return;
+        if (!confirm('현재 기록을 초기 데이터로 덮어쓸까요?')) return;
         state.records = sortRecords(clone(INITIAL_DATA));
         saveLocal();
         renderAll();
-        if (state.cloud.enabled && confirm('Firebase에도 같은 초기 데이터를 올릴까요?')) {
-          await pushLocalToCloud();
-        }
+        if (state.cloud.enabled && state.cloud.db) await pushLocalToCloud(false);
         alert('초기 데이터를 다시 불러왔습니다.');
       });
-      el('siteTitleInput').addEventListener('input', (e) => applySiteTitle(e.target.value));
+
+      el('siteTitleInput').addEventListener('input', (e) => setSiteTitle(e.target.value));
     }
 
-    function renderAll() {
-      renderRecords();
-      renderDashboard();
-    }
-
-    function init() {
+    async function init() {
       loadConfig();
       loadLocal();
+      renderRoundInputs();
       clearForm();
       bindEvents();
       renderAll();
-      setSyncStatus('local', '로컬 모드');
+      setSyncStatus('local', '자동 연결 시도 중');
+      await connectFirebase({silent: true});
+      if (!state.cloud.enabled) setSyncStatus('local', '로컬 모드');
     }
 
     init();
