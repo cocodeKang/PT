@@ -48,76 +48,35 @@
       flex-wrap: wrap;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 14px; }
     .logo {
-      width: 50px;
-      height: 50px;
-      border-radius: 16px;
+      width: 50px; height: 50px; border-radius: 16px;
       background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      display: grid;
-      place-items: center;
-      font-size: 24px;
-      box-shadow: var(--shadow);
+      display: grid; place-items: center; font-size: 24px; box-shadow: var(--shadow);
     }
+    h1 { margin: 0; font-size: clamp(1.4rem, 2vw, 2rem); }
+    .subtitle { color: var(--muted); margin-top: 4px; font-size: .95rem; }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(1.4rem, 2vw, 2rem);
+    .status-group, .toolbar {
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
     }
-
-    .subtitle {
-      color: var(--muted);
-      margin-top: 4px;
-      font-size: .95rem;
-    }
-
-    .status-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
     .pill {
       border: 1px solid var(--line);
       background: rgba(255,255,255,.03);
       border-radius: 999px;
       padding: 10px 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: .92rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: .92rem;
     }
-
     .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: #64748b;
-      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+      width: 10px; height: 10px; border-radius: 999px;
+      background: #64748b; box-shadow: 0 0 0 4px rgba(255,255,255,.04);
     }
-
     .dot.online { background: var(--accent-2); }
     .dot.local { background: var(--warning); }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
-    }
-
-    .col {
-      display: grid;
-      gap: 18px;
-      align-content: start;
-    }
-
+    .layout { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
+    .col { display: grid; gap: 18px; align-content: start; }
     .card {
       background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
       border: 1px solid rgba(255,255,255,.08);
@@ -126,328 +85,132 @@
       overflow: hidden;
       backdrop-filter: blur(12px);
     }
-
     .card-head {
       padding: 18px 20px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
     }
-
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .card-desc {
-      color: var(--muted);
-      font-size: .92rem;
-      margin-top: 4px;
-    }
-
+    .card-title { font-size: 1.05rem; font-weight: 700; margin: 0; }
+    .card-desc { color: var(--muted); font-size: .92rem; margin-top: 4px; }
     .card-body { padding: 16px 20px 20px; }
 
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .metric {
       border: 1px solid var(--line);
       background: rgba(255,255,255,.025);
-      border-radius: 18px;
-      padding: 16px;
-      min-height: 108px;
+      border-radius: 18px; padding: 16px; min-height: 108px;
     }
+    .metric .label { color: var(--muted); font-size: .88rem; margin-bottom: 10px; }
+    .metric .value { font-size: clamp(1.35rem, 2vw, 2rem); font-weight: 800; letter-spacing: -.02em; }
+    .metric .sub { margin-top: 8px; color: var(--muted); font-size: .88rem; }
 
-    .metric .label {
-      color: var(--muted);
-      font-size: .88rem;
-      margin-bottom: 10px;
-    }
-
-    .metric .value {
-      font-size: clamp(1.35rem, 2vw, 2rem);
-      font-weight: 800;
-      letter-spacing: -.02em;
-    }
-
-    .metric .sub {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: .88rem;
-    }
-
-    .chart-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
     .chart-box {
       border: 1px solid var(--line);
       border-radius: 18px;
       padding: 14px;
       background: rgba(255,255,255,.02);
     }
-
-    .chart-box h3 {
-      font-size: .95rem;
-      margin: 0 0 12px;
-    }
-
+    .chart-box h3 { font-size: .95rem; margin: 0 0 12px; }
     .sparkline {
-      width: 100%;
-      height: 160px;
-      display: block;
+      width: 100%; height: 160px; display: block;
       background: linear-gradient(180deg, rgba(96,165,250,.04), transparent);
       border-radius: 14px;
     }
 
-    .summary-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
+    .summary-list { display: grid; gap: 10px; margin-top: 12px; }
     .summary-row {
-      display: grid;
-      grid-template-columns: 120px 1fr auto;
-      gap: 10px;
-      align-items: center;
-      font-size: .94rem;
+      display: grid; grid-template-columns: 120px 1fr auto;
+      gap: 10px; align-items: center; font-size: .94rem;
     }
-
     .summary-row .name { color: var(--muted); }
     .summary-row .bar {
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      overflow: hidden;
+      height: 10px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden;
     }
     .summary-row .bar > span {
-      display: block;
-      height: 100%;
-      width: 0;
+      display: block; height: 100%; width: 0;
       background: linear-gradient(90deg, var(--accent), #34d399);
       border-radius: inherit;
     }
 
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
     button, .btn {
-      border: 0;
-      background: #1e293b;
-      color: var(--text);
-      padding: 11px 14px;
-      border-radius: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: .18s ease;
-      border: 1px solid rgba(255,255,255,.07);
+      border: 0; background: #1e293b; color: var(--text);
+      padding: 11px 14px; border-radius: 14px; font-weight: 700; cursor: pointer;
+      transition: .18s ease; border: 1px solid rgba(255,255,255,.07);
+      text-decoration: none;
     }
-
-    button:hover, .btn:hover {
-      transform: translateY(-1px);
-      background: #24324a;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    }
-
-    .btn-primary:hover { background: linear-gradient(135deg, #2b6ff0, #2358df); }
-
-    .btn-success {
-      background: linear-gradient(135deg, #16a34a, #15803d);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-    }
-
+    button:hover, .btn:hover { transform: translateY(-1px); background: #24324a; }
+    .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .btn-success { background: linear-gradient(135deg, #16a34a, #15803d); }
+    .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); }
     .btn-ghost { background: rgba(255,255,255,.03); }
 
     input, textarea, select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      padding: 12px 13px;
-      outline: none;
-      font: inherit;
+      width: 100%; border: 1px solid var(--line); border-radius: 14px;
+      background: rgba(255,255,255,.03); color: var(--text);
+      padding: 12px 13px; outline: none; font: inherit;
     }
-
     input::placeholder, textarea::placeholder { color: #7c8aa8; }
-    textarea { min-height: 160px; resize: vertical; }
+    textarea { min-height: 180px; resize: vertical; }
 
-    .grid-2, .grid-3, .grid-4 {
-      display: grid;
-      gap: 12px;
-    }
-
+    .grid-2, .grid-3, .grid-4 { display: grid; gap: 12px; }
     .grid-2 { grid-template-columns: repeat(2, 1fr); }
     .grid-3 { grid-template-columns: repeat(3, 1fr); }
     .grid-4 { grid-template-columns: repeat(4, 1fr); }
-
-    .label {
-      display: block;
-      font-size: .88rem;
-      margin-bottom: 7px;
-      color: var(--muted);
-    }
+    .label { display: block; font-size: .88rem; margin-bottom: 7px; color: var(--muted); }
 
     .round-card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px;
+      border: 1px solid var(--line); border-radius: 18px; padding: 14px;
       background: rgba(255,255,255,.02);
     }
-
     .round-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 10px; margin-bottom: 12px;
     }
+    .round-title { font-weight: 800; font-size: .98rem; }
 
-    .round-title {
-      font-weight: 800;
-      font-size: .98rem;
-    }
-
-    .records {
-      display: grid;
-      gap: 12px;
-      max-height: 860px;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
+    .records { display: grid; gap: 12px; max-height: 860px; overflow: auto; padding-right: 4px; }
     .record {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255,255,255,.025);
-      padding: 14px;
-      display: grid;
-      gap: 10px;
+      border: 1px solid var(--line); border-radius: 18px;
+      background: rgba(255,255,255,.025); padding: 14px; display: grid; gap: 10px;
     }
-
     .record-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
+      display: flex; justify-content: space-between; gap: 12px;
+      align-items: center; flex-wrap: wrap;
     }
-
-    .record-date {
-      font-size: 1rem;
-      font-weight: 800;
-    }
-
+    .record-date { font-size: 1rem; font-weight: 800; }
     .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(96,165,250,.1);
-      color: #b9d8ff;
-      font-size: .82rem;
-      border: 1px solid rgba(96,165,250,.18);
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+      border-radius: 999px; background: rgba(96,165,250,.1); color: #b9d8ff;
+      font-size: .82rem; border: 1px solid rgba(96,165,250,.18);
     }
-
-    .record-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
+    .record-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .mini {
       background: rgba(255,255,255,.03);
       border: 1px solid rgba(255,255,255,.05);
-      border-radius: 12px;
-      padding: 10px 10px;
+      border-radius: 12px; padding: 10px 10px;
     }
+    .mini .k { color: var(--muted); font-size: .82rem; margin-bottom: 5px; }
+    .mini .v { font-weight: 800; font-size: .98rem; }
+    .record-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .mini .k {
-      color: var(--muted);
-      font-size: .82rem;
-      margin-bottom: 5px;
-    }
-
-    .mini .v {
-      font-weight: 800;
-      font-size: .98rem;
-    }
-
-    .record-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .empty {
-      color: var(--muted);
-      padding: 12px 2px;
-      font-size: .95rem;
-    }
-
-    .helper {
-      color: var(--muted);
-      font-size: .9rem;
-      line-height: 1.6;
-    }
-
-    .config-area {
-      display: none;
-      margin-top: 12px;
-      border-top: 1px dashed rgba(255,255,255,.12);
-      padding-top: 14px;
-    }
-
+    .empty { color: var(--muted); padding: 12px 2px; font-size: .95rem; }
+    .helper { color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    .config-area { display: none; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,.12); padding-top: 14px; }
     .config-area.open { display: block; }
-
     .notice {
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.55;
+      padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03); color: var(--muted); font-size: .92rem; line-height: 1.55;
     }
-
-    .footer-note {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: .88rem;
-      text-align: center;
-    }
+    .footer-note { margin-top: 18px; color: var(--muted); font-size: .88rem; text-align: center; }
 
     @media (max-width: 1100px) {
       .layout { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: repeat(2, 1fr); }
     }
-
     @media (max-width: 760px) {
       .wrap { width: min(100% - 18px, 1000px); }
-      .metrics, .grid-4, .grid-3, .grid-2, .chart-grid, .record-grid {
-        grid-template-columns: 1fr;
-      }
+      .metrics, .grid-4, .grid-3, .grid-2, .chart-grid, .record-grid { grid-template-columns: 1fr; }
       .summary-row { grid-template-columns: 90px 1fr auto; }
       .card-head, .card-body { padding-left: 14px; padding-right: 14px; }
       button, .btn { width: 100%; }
@@ -482,6 +245,7 @@
             </div>
             <div class="toolbar">
               <button class="btn-ghost" id="seedBtn">초기 데이터 다시 불러오기</button>
+              <button class="btn-ghost" id="pushLocalBtn">로컬 기록 클라우드로 밀어넣기</button>
               <button class="btn-ghost" id="exportBtn">JSON 백업</button>
               <label class="btn btn-ghost" for="importInput">JSON 복원</label>
               <input type="file" id="importInput" accept="application/json" hidden />
@@ -550,9 +314,7 @@
             </div>
 
             <div style="height:12px"></div>
-
             <div class="grid-3" id="roundsWrap"></div>
-
             <div style="height:12px"></div>
             <div class="toolbar">
               <button class="btn-ghost" id="addRoundBtn">라운드 추가</button>
@@ -577,20 +339,19 @@
           </div>
           <div class="card-body">
             <div class="notice">
-              이 사이트는 기본적으로 로컬 저장으로 바로 동작합니다. Firebase를 쓰려면 아래에 <strong>firebaseConfig JSON</strong>과 <strong>컬렉션 경로</strong>를 넣고 연결하세요.
+              기본은 로컬 저장으로 동작합니다. Firebase를 쓰려면 아래에 <strong>firebaseConfig</strong>와 <strong>컬렉션 경로</strong>를 넣고 연결하세요. 연결 후 컬렉션이 비어 있으면 로컬 데이터를 그대로 업로드할 수도 있습니다.
             </div>
 
             <div class="config-area" id="configArea">
               <div style="height:12px"></div>
-              <label class="label" for="firebaseConfigInput">firebaseConfig JSON</label>
+              <label class="label" for="firebaseConfigInput">firebaseConfig JSON 또는 JS 객체 형태</label>
               <textarea id="firebaseConfigInput" placeholder='{
-      apiKey: "AIzaSyB-iWsEfB2nfFdqgZTnOzFErA-CR7UYUWU",
-    authDomain: "cocodekang-pt.firebaseapp.com",
-    projectId: "cocodekang-pt",
-    storageBucket: "cocodekang-pt.firebasestorage.app",
-    messagingSenderId: "186879142379",
-    appId: "1:186879142379:web:76d5e07a9e8f4e0f09d1ae",
-    measurementId: "G-4B3XC08BR4"
+  "apiKey": "YOUR_API_KEY",
+  "authDomain": "YOUR_PROJECT.firebaseapp.com",
+  "projectId": "YOUR_PROJECT_ID",
+  "storageBucket": "YOUR_PROJECT.firebasestorage.app",
+  "messagingSenderId": "1234567890",
+  "appId": "1:1234567890:web:abcdef123456"
 }'></textarea>
 
               <div style="height:12px"></div>
@@ -611,7 +372,7 @@
               </div>
               <div style="height:10px"></div>
               <div class="helper">
-                권장 문서 ID는 날짜(YYYY-MM-DD)입니다. 현재 코드도 그 방식으로 저장됩니다.
+                문서 ID는 날짜(YYYY-MM-DD)를 권장합니다. 현재 코드도 그 방식으로 저장됩니다. 한 Firebase 앱에 이미 연결되어 있을 때는 config가 바뀌면 페이지를 한 번 새로고침한 뒤 다시 연결하세요.
               </div>
             </div>
           </div>
@@ -635,8 +396,8 @@
   </div>
 
   <script type="module">
-    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
-    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+    import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
     const INITIAL_DATA = [
       {"id":"2026-02-05","date":"2026-02-05","running":null,"rounds":[{"squat":70,"pullup":3,"dips":20,"pushup":40,"plank":75,"round":1}]},
@@ -658,9 +419,8 @@
       {"id":"2026-03-16","date":"2026-03-16","running":60,"rounds":[{"squat":75,"pullup":8,"dips":19,"pushup":50,"plank":120,"deadhang":25,"negpull":7,"round":1}]}
     ];
 
-    const STORAGE_KEY = 'workout-manager-v2';
+    const STORAGE_KEY = 'workout-manager-v3';
     const CONFIG_KEY = 'workout-manager-firebase-config';
-
     const EXERCISES = [
       { key: 'squat', label: '스쿼트' },
       { key: 'pullup', label: '턱걸이' },
@@ -668,7 +428,7 @@
       { key: 'pushup', label: '팔굽혀' },
       { key: 'plank', label: '플랭크(초)' },
       { key: 'deadhang', label: '데드행(초)' },
-      { key: 'negpull', label: '턱걸네' },
+      { key: 'negpull', label: '네거티브' },
     ];
 
     const el = (id) => document.getElementById(id);
@@ -683,32 +443,20 @@
       records: [],
       currentEditId: null,
       roundCount: 3,
-      cloud: {
-        enabled: false,
-        app: null,
-        db: null,
-        unsubscribe: null,
-      }
+      cloud: { enabled: false, app: null, db: null, unsubscribe: null }
     };
 
-    function clone(v) {
-      return JSON.parse(JSON.stringify(v));
-    }
-
-    function nowTime() {
+    const clone = (v) => JSON.parse(JSON.stringify(v));
+    const nowTime = () => {
       const d = new Date();
       return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
-    }
-
-    function parseNum(v) {
+    };
+    const parseNum = (v) => {
       if (v === '' || v === null || v === undefined) return null;
       const n = Number(v);
       return Number.isFinite(n) ? n : null;
-    }
-
-    function sortRecords(arr) {
-      return [...arr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-    }
+    };
+    const sortRecords = (arr) => [...arr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
     function saveLocal() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records));
@@ -724,7 +472,7 @@
       }
       try {
         state.records = sortRecords(JSON.parse(raw));
-      } catch (e) {
+      } catch {
         state.records = sortRecords(clone(INITIAL_DATA));
         saveLocal();
       }
@@ -737,9 +485,14 @@
         siteTitle: el('siteTitleInput').value.trim() || '운동관리 사이트',
       };
       localStorage.setItem(CONFIG_KEY, JSON.stringify(payload));
-      document.title = payload.siteTitle;
-      document.querySelector('h1').textContent = payload.siteTitle;
+      applySiteTitle(payload.siteTitle);
       alert('Firebase 설정을 저장했습니다.');
+    }
+
+    function applySiteTitle(title) {
+      const finalTitle = title || '운동관리 사이트';
+      document.title = finalTitle;
+      document.querySelector('h1').textContent = finalTitle;
     }
 
     function loadConfig() {
@@ -750,9 +503,8 @@
         el('firebaseConfigInput').value = cfg.firebaseConfigText || '';
         el('collectionPathInput').value = cfg.collectionPath || 'workoutRecords';
         el('siteTitleInput').value = cfg.siteTitle || '운동관리 사이트';
-        document.title = cfg.siteTitle || '운동관리 사이트';
-        document.querySelector('h1').textContent = cfg.siteTitle || '운동관리 사이트';
-      } catch (e) {}
+        applySiteTitle(cfg.siteTitle || '운동관리 사이트');
+      } catch {}
     }
 
     function clearConfig() {
@@ -760,29 +512,48 @@
       el('firebaseConfigInput').value = '';
       el('collectionPathInput').value = 'workoutRecords';
       el('siteTitleInput').value = '운동관리 사이트';
+      applySiteTitle('운동관리 사이트');
       alert('저장된 Firebase 설정을 삭제했습니다.');
     }
 
     function setSyncStatus(mode, text) {
       syncDot.className = 'dot';
-      if (mode === 'cloud') syncDot.classList.add('online');
-      else syncDot.classList.add('local');
+      syncDot.classList.add(mode === 'cloud' ? 'online' : 'local');
       syncText.textContent = text;
       lastSync.textContent = nowTime();
+    }
+
+    function getCurrentDraft() {
+      const date = el('dateInput').value;
+      const running = parseNum(el('runningInput').value);
+      const rounds = [];
+      for (let i = 1; i <= state.roundCount; i++) {
+        const obj = { round: i };
+        let hasValue = false;
+        for (const item of EXERCISES) {
+          const input = el(`${item.key}_${i}`);
+          if (!input) continue;
+          const v = parseNum(input.value);
+          if (v !== null) {
+            obj[item.key] = v;
+            hasValue = true;
+          }
+        }
+        if (hasValue) rounds.push(obj);
+      }
+      return { id: date || null, date: date || '', running, rounds };
     }
 
     function createRoundCard(idx) {
       const wrap = document.createElement('div');
       wrap.className = 'round-card';
       wrap.dataset.round = idx;
-
       const fields = EXERCISES.map(item => `
         <div>
           <label class="label" for="${item.key}_${idx}">${item.label}</label>
           <input type="number" min="0" step="1" id="${item.key}_${idx}" data-round="${idx}" data-key="${item.key}" placeholder="0" />
         </div>
       `).join('');
-
       wrap.innerHTML = `
         <div class="round-head">
           <div class="round-title">라운드 ${idx}</div>
@@ -793,76 +564,63 @@
       return wrap;
     }
 
-    function renderRoundInputs() {
+    function fillRoundInputs(rounds = []) {
+      rounds.forEach((round, idx) => {
+        EXERCISES.forEach(item => {
+          const target = el(`${item.key}_${idx + 1}`);
+          if (target) target.value = round[item.key] ?? '';
+        });
+      });
+    }
+
+    function renderRoundInputs(preserve = null) {
+      const draft = preserve || getCurrentDraft();
       roundsWrap.innerHTML = '';
       for (let i = 1; i <= state.roundCount; i++) roundsWrap.appendChild(createRoundCard(i));
+      if (draft) {
+        if (draft.date) el('dateInput').value = draft.date;
+        el('runningInput').value = draft.running ?? '';
+        fillRoundInputs(draft.rounds || []);
+      }
     }
 
     function clearForm() {
       state.currentEditId = null;
+      state.roundCount = 3;
       el('dateInput').value = new Date().toISOString().slice(0, 10);
       el('runningInput').value = '';
-      state.roundCount = 3;
-      renderRoundInputs();
+      renderRoundInputs({ id: null, date: el('dateInput').value, running: null, rounds: [] });
     }
 
     function readForm() {
-      const date = el('dateInput').value;
-      if (!date) {
+      const draft = getCurrentDraft();
+      if (!draft.date) {
         alert('날짜를 입력하세요.');
         return null;
       }
-      const rounds = [];
-      for (let i = 1; i <= state.roundCount; i++) {
-        const obj = { round: i };
-        let hasValue = false;
-        for (const item of EXERCISES) {
-          const v = parseNum(el(`${item.key}_${i}`).value);
-          if (v !== null) {
-            obj[item.key] = v;
-            hasValue = true;
-          }
-        }
-        if (hasValue) rounds.push(obj);
-      }
       return {
-        id: date,
-        date,
-        running: parseNum(el('runningInput').value),
-        rounds,
+        id: draft.date,
+        date: draft.date,
+        running: draft.running,
+        rounds: draft.rounds,
       };
     }
 
     function fillForm(record) {
       state.currentEditId = record.id;
+      state.roundCount = Math.max(3, record.rounds?.length || 1);
       el('dateInput').value = record.date;
       el('runningInput').value = record.running ?? '';
-      state.roundCount = Math.max(3, record.rounds?.length || 1);
-      renderRoundInputs();
-      (record.rounds || []).forEach((round, idx) => {
-        for (const item of EXERCISES) {
-          const target = el(`${item.key}_${idx + 1}`);
-          if (target) target.value = round[item.key] ?? '';
-        }
-      });
+      renderRoundInputs(record);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function summarizeRecord(record) {
-      const totals = {};
-      for (const item of EXERCISES) totals[item.key] = 0;
+      const totals = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
       for (const round of record.rounds || []) {
-        for (const item of EXERCISES) {
-          totals[item.key] += Number(round[item.key] || 0);
-        }
+        for (const item of EXERCISES) totals[item.key] += Number(round[item.key] || 0);
       }
       return totals;
-    }
-
-    function formatMetric(key, value) {
-      if (!value) return '0';
-      if (['plank', 'deadhang', 'running'].includes(key)) return `${value}`;
-      return `${value}`;
     }
 
     function renderRecords() {
@@ -892,14 +650,13 @@
             ${EXERCISES.map(item => `
               <div class="mini">
                 <div class="k">${item.label}</div>
-                <div class="v">${formatMetric(item.key, sums[item.key])}</div>
+                <div class="v">${sums[item.key] || 0}</div>
               </div>
             `).join('')}
           </div>
         `;
         recordsEl.appendChild(box);
       }
-
       recordsEl.querySelectorAll('[data-edit]').forEach(btn => {
         btn.addEventListener('click', () => {
           const record = state.records.find(r => r.id === btn.dataset.edit);
@@ -917,8 +674,7 @@
 
     function drawSparkline(svgId, values, color = '#60a5fa') {
       const svg = el(svgId);
-      const width = 320;
-      const height = 160;
+      const width = 320, height = 160;
       svg.innerHTML = '';
       if (!values.length) {
         svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="#94a3b8" font-size="14">데이터 없음</text>`;
@@ -928,19 +684,16 @@
       const min = Math.min(...values, 0);
       const span = Math.max(max - min, 1);
       const step = values.length === 1 ? width : width / (values.length - 1);
-
       const points = values.map((v, i) => {
         const x = i * step;
         const y = height - ((v - min) / span) * (height - 20) - 10;
         return `${x},${y}`;
       }).join(' ');
-
       const pathParts = values.map((v, i) => {
         const x = i * step;
         const y = height - ((v - min) / span) * (height - 20) - 10;
         return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
       }).join(' ');
-
       svg.innerHTML = `
         <defs>
           <linearGradient id="grad-${svgId}" x1="0" x2="0" y1="0" y2="1">
@@ -948,7 +701,6 @@
             <stop offset="100%" stop-color="${color}" stop-opacity="0" />
           </linearGradient>
         </defs>
-        <rect x="0" y="0" width="320" height="160" fill="transparent"></rect>
         <path d="${pathParts} L 320 160 L 0 160 Z" fill="url(#grad-${svgId})"></path>
         <polyline fill="none" stroke="${color}" stroke-width="3" points="${points}" stroke-linecap="round" stroke-linejoin="round"></polyline>
         ${values.map((v, i) => {
@@ -969,15 +721,9 @@
       el('mRecent').textContent = list[0]?.date || '-';
       el('mRunning').textContent = totalRunning;
 
-      const bests = {};
-      const totals = {};
-      const counts = {};
-      for (const item of EXERCISES) {
-        bests[item.key] = 0;
-        totals[item.key] = 0;
-        counts[item.key] = 0;
-      }
-
+      const bests = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
+      const totals = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
+      const counts = Object.fromEntries(EXERCISES.map(item => [item.key, 0]));
       const squatTrend = [];
       const pullupTrend = [];
 
@@ -999,8 +745,7 @@
       drawSparkline('chartPullup', pullupTrend, '#34d399');
 
       const maxBest = Math.max(...Object.values(bests), 1);
-      const summary = el('bestSummary');
-      summary.innerHTML = EXERCISES.map(item => {
+      el('bestSummary').innerHTML = EXERCISES.map(item => {
         const avg = counts[item.key] ? (totals[item.key] / counts[item.key]).toFixed(1) : '0.0';
         const best = bests[item.key] || 0;
         const w = Math.max(6, Math.round((best / maxBest) * 100));
@@ -1018,7 +763,6 @@
       state.records = sortRecords([...state.records.filter(r => r.id !== record.id), record]);
       saveLocal();
       renderAll();
-
       if (state.cloud.enabled && state.cloud.db) {
         const path = el('collectionPathInput').value.trim() || 'workoutRecords';
         await setDoc(doc(collection(state.cloud.db, path), record.id), record);
@@ -1030,7 +774,6 @@
       state.records = sortRecords(state.records.filter(r => r.id !== id));
       saveLocal();
       renderAll();
-
       if (state.cloud.enabled && state.cloud.db) {
         const path = el('collectionPathInput').value.trim() || 'workoutRecords';
         await deleteDoc(doc(collection(state.cloud.db, path), id));
@@ -1038,19 +781,44 @@
       }
     }
 
+    function parseFirebaseConfig(raw) {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        try {
+          return Function(`"use strict"; return (${raw});`)();
+        } catch {
+          throw new Error('invalid-config');
+        }
+      }
+    }
+
+    async function pushLocalToCloud() {
+      if (!(state.cloud.enabled && state.cloud.db)) {
+        alert('먼저 Firebase를 연결하세요.');
+        return;
+      }
+      const path = el('collectionPathInput').value.trim() || 'workoutRecords';
+      for (const record of state.records) {
+        await setDoc(doc(collection(state.cloud.db, path), record.id), record);
+      }
+      setSyncStatus('cloud', 'Firebase 실시간 연결 중');
+      alert('현재 로컬 기록을 Firebase에 업로드했습니다.');
+    }
+
     async function connectFirebase() {
       const raw = el('firebaseConfigInput').value.trim();
       const path = el('collectionPathInput').value.trim() || 'workoutRecords';
       if (!raw) {
-        alert('firebaseConfig JSON을 먼저 넣어주세요.');
+        alert('firebaseConfig를 먼저 넣어주세요.');
         return;
       }
 
       let config;
       try {
-        config = JSON.parse(raw);
-      } catch (e) {
-        alert('firebaseConfig JSON 형식이 올바르지 않습니다.');
+        config = parseFirebaseConfig(raw);
+      } catch {
+        alert('firebaseConfig 형식이 올바르지 않습니다. JSON 또는 JS 객체 형태로 넣어주세요.');
         return;
       }
 
@@ -1060,14 +828,27 @@
           state.cloud.unsubscribe = null;
         }
 
-        const app = getApps().length ? getApps()[0] : initializeApp(config);
-        const db = getFirestore(app);
+        let app;
+        if (getApps().length) app = getApp();
+        else app = initializeApp(config);
 
+        const db = getFirestore(app);
         state.cloud.app = app;
         state.cloud.db = db;
         state.cloud.enabled = true;
 
-        const q = query(collection(db, path), orderBy('date', 'desc'));
+        const colRef = collection(db, path);
+        const initialSnapshot = await getDocs(colRef);
+        if (initialSnapshot.empty && state.records.length) {
+          const shouldUpload = confirm('Firebase 컬렉션이 비어 있습니다. 현재 로컬 기록을 먼저 업로드할까요?');
+          if (shouldUpload) {
+            for (const record of state.records) {
+              await setDoc(doc(colRef, record.id), record);
+            }
+          }
+        }
+
+        const q = query(colRef, orderBy('date', 'desc'));
         state.cloud.unsubscribe = onSnapshot(q, (snap) => {
           const items = snap.docs.map(d => ({ ...d.data(), id: d.id }));
           state.records = sortRecords(items);
@@ -1076,7 +857,7 @@
           setSyncStatus('cloud', 'Firebase 실시간 연결 중');
         }, (error) => {
           console.error(error);
-          setSyncStatus('local', '로컬 모드 (연결 오류)');
+          disconnectFirebase(false);
           alert('Firebase 연결 중 오류가 발생했습니다. Firestore 규칙과 컬렉션 경로를 확인하세요.');
         });
 
@@ -1087,22 +868,23 @@
       }
     }
 
-    function disconnectFirebase() {
+    function disconnectFirebase(render = true) {
       if (state.cloud.unsubscribe) state.cloud.unsubscribe();
       state.cloud.unsubscribe = null;
       state.cloud.enabled = false;
       state.cloud.db = null;
       setSyncStatus('local', '로컬 모드');
-      renderAll();
+      if (render) renderAll();
     }
 
     function exportJson() {
       const blob = new Blob([JSON.stringify(state.records, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
+      a.href = url;
       a.download = `운동기록_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
-      URL.revokeObjectURL(a.href);
+      URL.revokeObjectURL(url);
     }
 
     function importJson(file) {
@@ -1110,17 +892,18 @@
       reader.onload = async () => {
         try {
           const parsed = JSON.parse(reader.result);
-          if (!Array.isArray(parsed)) throw new Error('배열 아님');
+          if (!Array.isArray(parsed)) throw new Error('not-array');
           state.records = sortRecords(parsed);
           saveLocal();
           renderAll();
           if (state.cloud.enabled && state.cloud.db) {
+            const path = el('collectionPathInput').value.trim() || 'workoutRecords';
             for (const record of state.records) {
-              await setDoc(doc(collection(state.cloud.db, el('collectionPathInput').value.trim() || 'workoutRecords'), record.id), record);
+              await setDoc(doc(collection(state.cloud.db, path), record.id), record);
             }
           }
           alert('JSON 복원이 완료되었습니다.');
-        } catch (e) {
+        } catch {
           alert('JSON 파일 형식이 올바르지 않습니다.');
         }
       };
@@ -1130,43 +913,46 @@
     function bindEvents() {
       el('newBtn').addEventListener('click', clearForm);
       el('addRoundBtn').addEventListener('click', () => {
+        const draft = getCurrentDraft();
         state.roundCount += 1;
-        renderRoundInputs();
+        renderRoundInputs(draft);
       });
       el('removeRoundBtn').addEventListener('click', () => {
         if (state.roundCount <= 1) return;
+        const draft = getCurrentDraft();
+        draft.rounds = draft.rounds.slice(0, Math.max(0, state.roundCount - 1));
         state.roundCount -= 1;
-        renderRoundInputs();
+        renderRoundInputs(draft);
       });
-
       el('saveBtn').addEventListener('click', async () => {
         const record = readForm();
         if (!record) return;
         await upsertRecord(record);
         alert('저장했습니다.');
       });
-
-      el('toggleConfigBtn').addEventListener('click', () => {
-        configArea.classList.toggle('open');
-      });
+      el('toggleConfigBtn').addEventListener('click', () => configArea.classList.toggle('open'));
       el('saveConfigBtn').addEventListener('click', saveConfig);
       el('clearConfigBtn').addEventListener('click', clearConfig);
       el('connectBtn').addEventListener('click', connectFirebase);
-      el('disconnectBtn').addEventListener('click', disconnectFirebase);
+      el('disconnectBtn').addEventListener('click', () => disconnectFirebase(true));
       el('exportBtn').addEventListener('click', exportJson);
+      el('pushLocalBtn').addEventListener('click', pushLocalToCloud);
       el('importInput').addEventListener('change', (e) => {
         const file = e.target.files?.[0];
         if (file) importJson(file);
         e.target.value = '';
       });
-
-      el('seedBtn').addEventListener('click', () => {
+      el('seedBtn').addEventListener('click', async () => {
         if (!confirm('현재 로컬 기록을 초기 데이터로 덮어쓸까요?')) return;
         state.records = sortRecords(clone(INITIAL_DATA));
         saveLocal();
         renderAll();
+        if (state.cloud.enabled && confirm('Firebase에도 같은 초기 데이터를 올릴까요?')) {
+          await pushLocalToCloud();
+        }
         alert('초기 데이터를 다시 불러왔습니다.');
       });
+      el('siteTitleInput').addEventListener('input', (e) => applySiteTitle(e.target.value));
     }
 
     function renderAll() {
@@ -1177,7 +963,6 @@
     function init() {
       loadConfig();
       loadLocal();
-      renderRoundInputs();
       clearForm();
       bindEvents();
       renderAll();
