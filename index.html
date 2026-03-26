@@ -485,6 +485,47 @@
     .diff-neg { color: #fca5a5; font-weight: 700; }
     .diff-zero { color: var(--muted); font-weight: 700; }
 
+
+
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .compare-screen {
+      display: none;
+      margin-bottom: 18px;
+    }
+
+    .compare-screen.open {
+      display: block;
+    }
+
+    .compare-screen .card {
+      border: 1px solid rgba(96,165,250,.35);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, .45);
+    }
+
+    .compare-screen-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .compare-input {
+      width: 100%;
+      min-width: 88px;
+    }
+
+    .home-hidden {
+      display: none !important;
+    }
+
     .footer-note {
       margin-top: 18px;
       color: var(--muted);
@@ -526,7 +567,48 @@
       </div>
     </div>
 
-    <div class="layout">
+    <div class="quick-actions">
+      <button class="btn-success" id="openCompareViewBtn">비교 보기</button>
+    </div>
+
+    <section class="compare-screen" id="compareScreen">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title">비교 보기</h2>
+            <div class="card-desc">평균, 최대 기록을 보고 현재 값을 바로 입력해서 비교합니다.</div>
+          </div>
+          <div class="toolbar">
+            <button class="btn-ghost" id="useFormValuesBtn">현재 입력값 가져오기</button>
+            <button class="btn-danger" id="closeCompareViewBtn">닫기</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="compare-screen-top">
+            <div class="compare-meta" id="compareMeta"></div>
+          </div>
+          <div class="compare-table-wrap">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>평균</th>
+                  <th>최대</th>
+                  <th>현재 값 입력</th>
+                  <th>평균 대비</th>
+                  <th>최대 대비</th>
+                </tr>
+              </thead>
+              <tbody id="compareTableBody"></tbody>
+            </table>
+          </div>
+          <div style="height:10px"></div>
+          <div class="helper">여기서 입력한 현재 값은 저장되지 않으며, 비교용으로만 바로 계산됩니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout" id="mainLayout">
       <div class="col">
         <section class="card">
           <div class="card-head">
@@ -670,43 +752,6 @@
           </div>
         </section>
 
-        <section class="card">
-          <div class="card-head">
-            <div>
-              <h2 class="card-title">비교보기</h2>
-              <div class="card-desc">저장된 기준 기록과 현재 입력값을 바로 비교합니다.</div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="grid-2">
-              <div>
-                <label class="label" for="compareRecordSelect">기준 기록</label>
-                <select id="compareRecordSelect"></select>
-              </div>
-              <div>
-                <label class="label" for="compareCurrentDate">현재 입력 날짜</label>
-                <input id="compareCurrentDate" placeholder="현재 입력 날짜" readonly />
-              </div>
-            </div>
-            <div class="compare-meta" id="compareMeta"></div>
-            <div class="compare-table-wrap">
-              <table class="compare-table">
-                <thead>
-                  <tr>
-                    <th>항목</th>
-                    <th>기준 기록</th>
-                    <th>현재 입력값</th>
-                    <th>차이</th>
-                  </tr>
-                </thead>
-                <tbody id="compareTableBody"></tbody>
-              </table>
-            </div>
-            <div style="height:10px"></div>
-            <div class="helper">현재 입력값은 저장 전에도 바로 반영됩니다.</div>
-          </div>
-        </section>
-
 
         <section class="card">
           <div class="card-head">
@@ -769,16 +814,16 @@
     const syncDot = el('syncDot');
     const syncText = el('syncText');
     const lastSync = el('lastSync');
-    const compareRecordSelect = el('compareRecordSelect');
     const compareTableBody = el('compareTableBody');
     const compareMeta = el('compareMeta');
-    const compareCurrentDate = el('compareCurrentDate');
+    const compareScreen = el('compareScreen');
+    const mainLayout = el('mainLayout');
 
     let state = {
       records: [],
       currentEditId: null,
       roundCount: 3,
-      compareTargetId: null,
+      compareInputs: {},
       cloud: {
         enabled: false,
         app: null,
@@ -809,8 +854,57 @@
       return `<span class="diff-neg">${value}</span>`;
     }
 
-    function readDraftForm() {
-      const date = el('dateInput').value || new Date().toISOString().slice(0, 10);
+
+    function inputNumberHtml(key, value) {
+      const safe = Number.isFinite(value) ? value : '';
+      return `<input type="number" min="0" step="1" class="compare-input" data-compare-key="${key}" value="${safe}" placeholder="0" />`;
+    }
+
+    function getAverageAndMaxRows() {
+      const rows = [
+        { key: 'running', label: '러닝(초)' },
+        ...EXERCISES.map(item => ({ key: item.key, label: item.label }))
+      ];
+
+      return rows.map(row => {
+        const values = state.records.map(record => {
+          if (row.key === 'running') return Number(record.running || 0);
+          const sums = summarizeRecord(record);
+          return Number(sums[row.key] || 0);
+        }).filter(v => Number.isFinite(v));
+
+        const total = values.reduce((acc, cur) => acc + cur, 0);
+        const avg = values.length ? total / values.length : 0;
+        const max = values.length ? Math.max(...values) : 0;
+        const current = Number(state.compareInputs[row.key] || 0);
+        return { ...row, avg, max, current };
+      });
+    }
+
+    function openCompareView() {
+      compareScreen.classList.add('open');
+      mainLayout.classList.add('home-hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderCompare();
+    }
+
+    function closeCompareView() {
+      compareScreen.classList.remove('open');
+      mainLayout.classList.remove('home-hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function syncCompareInputsFromForm() {
+      const draft = readDraftForm();
+      const sums = summarizeRecord(draft);
+      state.compareInputs.running = Number(draft.running || 0);
+      for (const item of EXERCISES) {
+        state.compareInputs[item.key] = Number(sums[item.key] || 0);
+      }
+      renderCompare();
+    }
+
+    function readDraftForm() {      const date = el('dateInput').value || new Date().toISOString().slice(0, 10);
       const rounds = [];
       for (let i = 1; i <= state.roundCount; i++) {
         const obj = { round: i };
@@ -1046,61 +1140,31 @@
 
 
     function renderCompare() {
-      const list = sortRecords(state.records);
-      compareCurrentDate.value = el('dateInput').value || new Date().toISOString().slice(0, 10);
+      const rows = getAverageAndMaxRows();
+      const filledCount = rows.filter(row => Number(row.current || 0) > 0).length;
+      compareMeta.innerHTML = `
+        <span class="compare-badge">기록 ${state.records.length}일 기준</span>
+        <span class="compare-badge">입력 항목 ${filledCount}개</span>
+      `;
 
-      if (!list.length) {
-        compareRecordSelect.innerHTML = '<option value="">기록 없음</option>';
-        compareTableBody.innerHTML = '<tr><td colspan="4">비교할 저장 기록이 없습니다.</td></tr>';
-        compareMeta.innerHTML = '<span class="compare-badge">기준 기록 없음</span>';
+      if (!rows.length) {
+        compareTableBody.innerHTML = '<tr><td colspan="6">비교할 데이터가 없습니다.</td></tr>';
         return;
       }
 
-      if (!state.compareTargetId || !list.some(record => record.id === state.compareTargetId)) {
-        state.compareTargetId = list[0].id;
-      }
-
-      compareRecordSelect.innerHTML = list.map(record => `
-        <option value="${record.id}" ${record.id === state.compareTargetId ? 'selected' : ''}>${record.date}</option>
-      `).join('');
-
-      const baseRecord = list.find(record => record.id === state.compareTargetId) || list[0];
-      const currentRecord = readDraftForm();
-      const baseSums = summarizeRecord(baseRecord);
-      const currentSums = summarizeRecord(currentRecord);
-
-      compareMeta.innerHTML = `
-        <span class="compare-badge">기준 날짜 ${baseRecord.date}</span>
-        <span class="compare-badge">기준 라운드 ${(baseRecord.rounds || []).length}개</span>
-        <span class="compare-badge">현재 라운드 ${(currentRecord.rounds || []).length}개</span>
-      `;
-
-      const rows = [
-        {
-          label: '러닝(초)',
-          base: Number(baseRecord.running || 0),
-          current: Number(currentRecord.running || 0),
-        },
-        {
-          label: '라운드 수',
-          base: Number((baseRecord.rounds || []).length),
-          current: Number((currentRecord.rounds || []).length),
-        },
-        ...EXERCISES.map(item => ({
-          label: item.label,
-          base: Number(baseSums[item.key] || 0),
-          current: Number(currentSums[item.key] || 0),
-        })),
-      ];
-
       compareTableBody.innerHTML = rows.map(row => {
-        const diff = row.current - row.base;
+        const avgText = row.avg ? row.avg.toFixed(1) : '0.0';
+        const maxText = Number.isFinite(row.max) ? row.max : 0;
+        const diffAvg = row.current - row.avg;
+        const diffMax = row.current - row.max;
         return `
           <tr>
             <td>${row.label}</td>
-            <td>${row.base}</td>
-            <td>${row.current}</td>
-            <td>${formatDiff(diff)}</td>
+            <td>${avgText}</td>
+            <td>${maxText}</td>
+            <td>${inputNumberHtml(row.key, row.current)}</td>
+            <td>${formatDiff(Math.round(diffAvg * 10) / 10)}</td>
+            <td>${formatDiff(diffMax)}</td>
           </tr>
         `;
       }).join('');
@@ -1332,14 +1396,15 @@
         renderCompare();
       });
 
-      compareRecordSelect.addEventListener('change', () => {
-        state.compareTargetId = compareRecordSelect.value || null;
-        renderCompare();
-      });
+      el('openCompareViewBtn').addEventListener('click', openCompareView);
+      el('closeCompareViewBtn').addEventListener('click', closeCompareView);
+      el('useFormValuesBtn').addEventListener('click', syncCompareInputsFromForm);
 
       document.addEventListener('input', (e) => {
-        if (e.target.matches('#dateInput, #runningInput, #roundsWrap input')) {
+        if (e.target.matches('[data-compare-key]')) {
+          state.compareInputs[e.target.dataset.compareKey] = parseNum(e.target.value) || 0;
           renderCompare();
+          return;
         }
       });
 
