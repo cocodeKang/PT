@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>운동관리 사이트</title>
   <meta name="theme-color" content="#0f172a" />
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --bg: #0b1020;
@@ -22,6 +20,7 @@
       --shadow: 0 20px 45px rgba(0,0,0,.28);
       --radius: 22px;
     }
+
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
@@ -33,212 +32,480 @@
       color: var(--text);
       min-height: 100vh;
     }
-    .wrap { width: min(1320px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 56px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
-    .brand { display: flex; align-items: center; gap: 14px; }
+
+    .wrap {
+      width: min(1320px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
     .logo {
-      width: 50px; height: 50px; border-radius: 16px;
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
       background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      display: grid; place-items: center; font-size: 24px; box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      box-shadow: var(--shadow);
     }
-    h1 { margin: 0; font-size: clamp(1.4rem, 2vw, 2rem); }
-    .subtitle { color: var(--muted); margin-top: 4px; font-size: .95rem; }
-    .status-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: .95rem;
+    }
+
+    .status-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
     .pill {
-      border: 1px solid var(--line); background: rgba(255,255,255,.03); border-radius: 999px;
-      padding: 10px 14px; display: inline-flex; align-items: center; gap: 8px;
-      color: var(--muted); font-size: .92rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      padding: 10px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .92rem;
     }
+
     .dot {
-      width: 10px; height: 10px; border-radius: 999px; background: #64748b;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #64748b;
       box-shadow: 0 0 0 4px rgba(255,255,255,.04);
     }
+
     .dot.online { background: var(--accent-2); }
     .dot.local { background: var(--warning); }
-    .layout { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
-    .col { display: grid; gap: 18px; align-content: start; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+
+    .col {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
     .card {
       background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
       backdrop-filter: blur(12px);
     }
+
     .card-head {
-      padding: 18px 20px 10px; display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; flex-wrap: wrap;
+      padding: 18px 20px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .card-title { font-size: 1.05rem; font-weight: 700; margin: 0; }
-    .card-desc { color: var(--muted); font-size: .92rem; margin-top: 4px; }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: .92rem;
+      margin-top: 4px;
+    }
+
     .card-body { padding: 16px 20px 20px; }
-    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
     .metric {
-      border: 1px solid var(--line); background: rgba(255,255,255,.025);
-      border-radius: 18px; padding: 16px; min-height: 108px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.025);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 108px;
     }
-    .metric .label { color: var(--muted); font-size: .88rem; margin-bottom: 10px; }
-    .metric .value { font-size: clamp(1.35rem, 2vw, 2rem); font-weight: 800; letter-spacing: -.02em; }
-    .metric .sub { margin-top: 8px; color: var(--muted); font-size: .88rem; }
-    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-bottom: 10px;
+    }
+
+    .metric .value {
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .metric .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
     .chart-box {
-      border: 1px solid var(--line); border-radius: 18px; padding: 14px; background: rgba(255,255,255,.02);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.02);
     }
-    .chart-box h3 { font-size: .95rem; margin: 0 0 12px; }
+
+    .chart-box h3 {
+      font-size: .95rem;
+      margin: 0 0 12px;
+    }
+
     .sparkline {
-      width: 100%; height: 160px; display: block;
-      background: linear-gradient(180deg, rgba(96,165,250,.04), transparent); border-radius: 14px;
+      width: 100%;
+      height: 160px;
+      display: block;
+      background: linear-gradient(180deg, rgba(96,165,250,.04), transparent);
+      border-radius: 14px;
     }
-    .summary-list { display: grid; gap: 10px; margin-top: 12px; }
-    .summary-row { display: grid; grid-template-columns: 120px 1fr auto; gap: 10px; align-items: center; font-size: .94rem; }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      font-size: .94rem;
+    }
+
     .summary-row .name { color: var(--muted); }
-    .summary-row .bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; }
-    .summary-row .bar > span {
-      display: block; height: 100%; width: 0;
-      background: linear-gradient(90deg, var(--accent), #34d399); border-radius: inherit;
+    .summary-row .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
     }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .summary-row .bar > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #34d399);
+      border-radius: inherit;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
     button, .btn {
-      border: 0; background: #1e293b; color: var(--text); padding: 11px 14px;
-      border-radius: 14px; font-weight: 700; cursor: pointer; transition: .18s ease;
+      border: 0;
+      background: #1e293b;
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
       border: 1px solid rgba(255,255,255,.07);
     }
-    button:hover, .btn:hover { transform: translateY(-1px); background: #24324a; }
-    .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .btn-primary:hover { background: linear-gradient(135deg, #2b6ff0, #2358df); }
-    .btn-success { background: linear-gradient(135deg, #16a34a, #15803d); }
-    .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-    .btn-ghost { background: rgba(255,255,255,.03); }
-    input, textarea, select {
-      width: 100%; border: 1px solid var(--line); border-radius: 14px;
-      background: rgba(255,255,255,.03); color: var(--text); padding: 12px 13px;
-      outline: none; font: inherit;
+
+    button:hover, .btn:hover {
+      transform: translateY(-1px);
+      background: #24324a;
     }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
+
+    .btn-primary:hover { background: linear-gradient(135deg, #2b6ff0, #2358df); }
+
+    .btn-success {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
+
+    .btn-ghost { background: rgba(255,255,255,.03); }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding: 12px 13px;
+      outline: none;
+      font: inherit;
+    }
+
     input::placeholder, textarea::placeholder { color: #7c8aa8; }
-    textarea { min-height: 170px; resize: vertical; }
-    .grid-2, .grid-3, .grid-4 { display: grid; gap: 12px; }
+    textarea { min-height: 160px; resize: vertical; }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 12px;
+    }
+
     .grid-2 { grid-template-columns: repeat(2, 1fr); }
     .grid-3 { grid-template-columns: repeat(3, 1fr); }
     .grid-4 { grid-template-columns: repeat(4, 1fr); }
-    .label { display: block; font-size: .88rem; margin-bottom: 7px; color: var(--muted); }
-    .round-card {
-      border: 1px solid var(--line); border-radius: 18px; padding: 14px; background: rgba(255,255,255,.02);
-    }
-    .round-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
-    .round-title { font-weight: 800; font-size: .98rem; }
-    .records { display: grid; gap: 12px; max-height: 860px; overflow: auto; padding-right: 4px; }
-    .record {
-      border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.025);
-      padding: 14px; display: grid; gap: 10px;
-    }
-    .record-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .record-date { font-size: 1rem; font-weight: 800; }
-    .tag {
-      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px;
-      background: rgba(96,165,250,.1); color: #b9d8ff; font-size: .82rem; border: 1px solid rgba(96,165,250,.18);
-    }
-    .record-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .mini {
-      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.05);
-      border-radius: 12px; padding: 10px 10px;
-    }
-    .mini .k { color: var(--muted); font-size: .82rem; margin-bottom: 5px; }
-    .mini .v { font-weight: 800; font-size: .98rem; }
-    .record-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .empty { color: var(--muted); padding: 12px 2px; font-size: .95rem; }
-    .helper { color: var(--muted); font-size: .9rem; line-height: 1.6; }
-    .config-area { display: none; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,.12); padding-top: 14px; }
-    .config-area.open { display: block; }
-    .notice {
-      padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03); color: var(--muted); font-size: .92rem; line-height: 1.55;
-    }
-    .footer-note { margin-top: 18px; color: var(--muted); font-size: .88rem; text-align: center; }
-    .tiny-note { color: var(--muted); font-size: .82rem; }
 
-    .autosave-note[data-tone="saved"] { border-color: rgba(34,197,94,.35); color: #c6f6d5; }
-    .autosave-note[data-tone="pending"] { border-color: rgba(245,158,11,.35); color: #fde68a; }
-    .autosave-note[data-tone="idle"] { color: var(--muted); }
-    .modal {
-      position: fixed; inset: 0; background: rgba(3,8,20,.72);
-      display: none; align-items: center; justify-content: center;
-      padding: 18px; z-index: 80;
+    .label {
+      display: block;
+      font-size: .88rem;
+      margin-bottom: 7px;
+      color: var(--muted);
     }
-    .modal.open { display: flex; }
-    .modal-panel {
-      width: min(920px, 100%); max-height: min(88vh, 980px);
-      background: linear-gradient(180deg, rgba(18,26,45,.98), rgba(12,18,32,.98));
-      border: 1px solid rgba(255,255,255,.1); border-radius: 24px;
-      box-shadow: var(--shadow); overflow: hidden;
-    }
-    .modal-panel.large { width: min(1100px, 100%); }
-    .modal-head {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .modal-kicker { color: var(--muted); font-size: .84rem; margin-bottom: 4px; }
-    .modal-title { margin: 0; font-size: 1.15rem; }
-    .modal-body { padding: 18px 20px 22px; overflow: auto; max-height: calc(88vh - 82px); }
-    .close-btn {
-      border-radius: 12px; padding: 10px 14px; background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.1); color: var(--text); cursor: pointer;
-    }
-    .detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .detail-section {
-      margin-top: 16px; border: 1px solid var(--line); border-radius: 18px;
-      background: rgba(255,255,255,.02); padding: 14px;
-    }
-    .detail-section h4 { margin: 0 0 10px; font-size: .95rem; }
-    .detail-rounds { display: grid; gap: 12px; }
-    .detail-round {
-      border: 1px solid rgba(255,255,255,.07); border-radius: 16px; padding: 12px;
+
+    .round-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
       background: rgba(255,255,255,.02);
     }
-    .detail-round-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
-    .compare-table { display: grid; gap: 12px; }
-    .compare-row {
-      border: 1px solid var(--line); border-radius: 18px; padding: 14px;
-      background: rgba(255,255,255,.02);
-    }
-    .compare-row-top {
-      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+
+    .round-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 12px;
     }
-    .compare-name { font-size: .98rem; font-weight: 800; }
-    .compare-values {
-      display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+
+    .round-title {
+      font-weight: 800;
+      font-size: .98rem;
     }
-    .compare-box {
-      border: 1px solid rgba(255,255,255,.07); border-radius: 14px; padding: 10px;
+
+    .records {
+      display: grid;
+      gap: 12px;
+      max-height: 860px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .record {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.025);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .record-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .record-date {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(96,165,250,.1);
+      color: #b9d8ff;
+      font-size: .82rem;
+      border: 1px solid rgba(96,165,250,.18);
+    }
+
+    .record-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .mini {
       background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: 12px;
+      padding: 10px 10px;
     }
-    .compare-box .k { color: var(--muted); font-size: .82rem; margin-bottom: 5px; }
-    .compare-box .v { font-size: 1rem; font-weight: 800; }
-    .bar-track {
-      margin-top: 10px; background: rgba(255,255,255,.06); border-radius: 999px;
-      height: 12px; overflow: hidden; position: relative;
+
+    .mini .k {
+      color: var(--muted);
+      font-size: .82rem;
+      margin-bottom: 5px;
     }
-    .bar-stack { display:flex; width:100%; height:100%; }
-    .bar-current { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
-    .bar-average { background: linear-gradient(90deg, #34d399, #10b981); }
-    .bar-best { background: linear-gradient(90deg, #f59e0b, #f97316); }
+
+    .mini .v {
+      font-weight: 800;
+      font-size: .98rem;
+    }
+
+    .record-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 12px 2px;
+      font-size: .95rem;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .config-area {
+      display: none;
+      margin-top: 12px;
+      border-top: 1px dashed rgba(255,255,255,.12);
+      padding-top: 14px;
+    }
+
+    .config-area.open { display: block; }
+
+    .notice {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.55;
+    }
+
+
+    .compare-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 12px 0 14px;
+    }
+
+    .compare-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,.08);
+      font-size: .88rem;
+    }
+
+    .compare-table-wrap {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,.02);
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .94rem;
+    }
+
+    .compare-table th,
+    .compare-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      text-align: center;
+    }
+
+    .compare-table th:first-child,
+    .compare-table td:first-child {
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .compare-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .diff-pos { color: #86efac; font-weight: 700; }
+    .diff-neg { color: #fca5a5; font-weight: 700; }
+    .diff-zero { color: var(--muted); font-weight: 700; }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .88rem;
+      text-align: center;
+    }
+
     @media (max-width: 1100px) {
       .layout { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: repeat(2, 1fr); }
     }
+
     @media (max-width: 760px) {
       .wrap { width: min(100% - 18px, 1000px); }
-      .layout { display: flex; flex-direction: column; }
-      .col { display: contents; }
-      #inputCard { order: 1; }
-      #dashboardCard { order: 2; }
-      #recordsCard { order: 3; }
-      #firebaseCard { order: 4; }
-      .metrics, .grid-4, .grid-3, .grid-2, .chart-grid, .record-grid, .detail-grid, .compare-values { grid-template-columns: 1fr; }
+      .metrics, .grid-4, .grid-3, .grid-2, .chart-grid, .record-grid {
+        grid-template-columns: 1fr;
+      }
       .summary-row { grid-template-columns: 90px 1fr auto; }
-      .card-head, .card-body, .modal-head, .modal-body { padding-left: 14px; padding-right: 14px; }
+      .card-head, .card-body { padding-left: 14px; padding-right: 14px; }
       button, .btn { width: 100%; }
       .status-group, .toolbar { width: 100%; }
-      .modal { padding: 10px; align-items: flex-end; }
-      .modal-panel, .modal-panel.large { width: 100%; max-height: 90vh; border-radius: 22px 22px 0 0; }
     }
   </style>
 </head>
@@ -249,11 +516,11 @@
         <div class="logo">💪</div>
         <div>
           <h1>운동관리 사이트</h1>
-          <div class="subtitle">GitHub Pages 배포용 단일 HTML · Firebase 자동 연결 · 로컬 백업 · 엑셀 다운로드</div>
+          <div class="subtitle">GitHub Pages 배포용 단일 HTML · 로컬 저장 + Firebase Firestore 실시간 동기화</div>
         </div>
       </div>
       <div class="status-group">
-        <div class="pill"><span class="dot" id="syncDot"></span><span id="syncText">연결 준비 중</span></div>
+        <div class="pill"><span class="dot" id="syncDot"></span><span id="syncText">로컬 모드</span></div>
         <div class="pill"><span>기록 수</span><strong id="recordCount">0</strong></div>
         <div class="pill"><span>마지막 동기화</span><strong id="lastSync">-</strong></div>
       </div>
@@ -261,7 +528,7 @@
 
     <div class="layout">
       <div class="col">
-        <section class="card" id="dashboardCard">
+        <section class="card">
           <div class="card-head">
             <div>
               <h2 class="card-title">대시보드</h2>
@@ -269,8 +536,7 @@
             </div>
             <div class="toolbar">
               <button class="btn-ghost" id="seedBtn">초기 데이터 다시 불러오기</button>
-              <button class="btn-ghost" id="exportJsonBtn">JSON 백업</button>
-              <button class="btn-primary" id="exportExcelBtn">엑셀 다운로드</button>
+              <button class="btn-ghost" id="exportBtn">JSON 백업</button>
               <label class="btn btn-ghost" for="importInput">JSON 복원</label>
               <input type="file" id="importInput" accept="application/json" hidden />
             </div>
@@ -314,16 +580,15 @@
           </div>
         </section>
 
-        <section class="card" id="inputCard">
+        <section class="card">
           <div class="card-head">
             <div>
-              <h2 class="card-title">운동 입력</h2>
-              <div class="card-desc">오늘 날짜가 기본으로 잡히고, 숫자를 입력하거나 다음 칸으로 이동하면 자동 저장됩니다.</div>
+              <h2 class="card-title">기록 입력 / 수정</h2>
+              <div class="card-desc">날짜 하나당 문서 1개입니다. 같은 날짜로 저장하면 덮어쓰기됩니다.</div>
             </div>
             <div class="toolbar">
-              <button class="btn-ghost" id="newBtn">오늘 기록</button>
-              <button class="btn-primary" id="compareBtn">비교 보기</button>
-              <button class="btn-success" id="saveBtn">지금 저장</button>
+              <button class="btn-ghost" id="newBtn">새 입력</button>
+              <button class="btn-success" id="saveBtn">저장</button>
             </div>
           </div>
           <div class="card-body">
@@ -331,16 +596,12 @@
               <div>
                 <label class="label" for="dateInput">날짜</label>
                 <input type="date" id="dateInput" />
-                <div class="tiny-note" id="dateDisplayText">-</div>
               </div>
               <div>
                 <label class="label" for="runningInput">러닝(초)</label>
-                <input type="number" id="runningInput" min="0" step="1" placeholder="예: 600" inputmode="numeric" enterkeyhint="next" />
+                <input type="number" id="runningInput" min="0" step="1" placeholder="예: 600" />
               </div>
             </div>
-
-            <div style="height:12px"></div>
-            <div class="notice autosave-note" id="autosaveStatus">자동 저장 대기 중</div>
 
             <div style="height:12px"></div>
 
@@ -356,27 +617,34 @@
       </div>
 
       <div class="col">
-        <section class="card" id="firebaseCard">
+        <section class="card">
           <div class="card-head">
             <div>
-              <h2 class="card-title">Firebase 자동 연결 설정</h2>
-              <div class="card-desc">페이지가 열리면 저장된 설정 또는 기본 설정으로 자동 연결을 시도합니다.</div>
+              <h2 class="card-title">Firebase 연결</h2>
+              <div class="card-desc">설정 저장 후 연결하면 GitHub Pages에서도 실시간 동기화됩니다.</div>
             </div>
             <div class="toolbar">
               <button class="btn-ghost" id="toggleConfigBtn">설정 펼치기</button>
-              <button class="btn-primary" id="connectBtn">지금 다시 연결</button>
+              <button class="btn-primary" id="connectBtn">Firebase 연결</button>
               <button class="btn-ghost" id="disconnectBtn">로컬 모드</button>
-              <button class="btn-success" id="pushCloudBtn">로컬 → Firebase 업로드</button>
             </div>
           </div>
           <div class="card-body">
             <div class="notice">
-              저장된 설정이 있으면 자동으로 Firestore 실시간 리스너를 연결합니다. 원격 데이터가 있으면 그것을 기준으로 불러오고, 비어 있으면 현재 로컬 데이터를 업로드합니다.
+              이 사이트는 기본적으로 로컬 저장으로 바로 동작합니다. Firebase를 쓰려면 아래에 <strong>firebaseConfig JSON</strong>과 <strong>컬렉션 경로</strong>를 넣고 연결하세요.
             </div>
+
             <div class="config-area" id="configArea">
               <div style="height:12px"></div>
-              <label class="label" for="firebaseConfigInput">firebaseConfig</label>
-              <textarea id="firebaseConfigInput" spellcheck="false"></textarea>
+              <label class="label" for="firebaseConfigInput">firebaseConfig JSON</label>
+              <textarea id="firebaseConfigInput" placeholder='{
+  "apiKey": "...",
+  "authDomain": "...",
+  "projectId": "...",
+  "storageBucket": "...",
+  "messagingSenderId": "...",
+  "appId": "..."
+}'></textarea>
 
               <div style="height:12px"></div>
               <div class="grid-2">
@@ -396,20 +664,55 @@
               </div>
               <div style="height:10px"></div>
               <div class="helper">
-                문서 ID는 기본적으로 날짜(YYYY-MM-DD)입니다. 날짜 표시는 화면에서 항상 <strong>yyyy-mm-dd(요일)</strong> 형식으로 보입니다.
-              </div>
-              <div class="tiny-note" style="margin-top:8px;">
-                예시: 2026-03-23(월)
+                권장 문서 ID는 날짜(YYYY-MM-DD)입니다. 현재 코드도 그 방식으로 저장됩니다.
               </div>
             </div>
           </div>
         </section>
 
-        <section class="card" id="recordsCard">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">비교보기</h2>
+              <div class="card-desc">저장된 기준 기록과 현재 입력값을 바로 비교합니다.</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="grid-2">
+              <div>
+                <label class="label" for="compareRecordSelect">기준 기록</label>
+                <select id="compareRecordSelect"></select>
+              </div>
+              <div>
+                <label class="label" for="compareCurrentDate">현재 입력 날짜</label>
+                <input id="compareCurrentDate" placeholder="현재 입력 날짜" readonly />
+              </div>
+            </div>
+            <div class="compare-meta" id="compareMeta"></div>
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>항목</th>
+                    <th>기준 기록</th>
+                    <th>현재 입력값</th>
+                    <th>차이</th>
+                  </tr>
+                </thead>
+                <tbody id="compareTableBody"></tbody>
+              </table>
+            </div>
+            <div style="height:10px"></div>
+            <div class="helper">현재 입력값은 저장 전에도 바로 반영됩니다.</div>
+          </div>
+        </section>
+
+
+        <section class="card">
           <div class="card-head">
             <div>
               <h2 class="card-title">최근 기록</h2>
-              <div class="card-desc">상세기록 확인을 누르면 날짜별 라운드 내용을 바로 볼 수 있습니다.</div>
+              <div class="card-desc">수정하려면 수정 버튼을 누르세요.</div>
             </div>
           </div>
           <div class="card-body">
@@ -419,54 +722,12 @@
       </div>
     </div>
 
-    <div class="footer-note">GitHub Pages용 static HTML · Firebase 연결 실패 시 자동으로 로컬 모드로 전환</div>
-  </div>
-
-  <div class="modal" id="detailModal" aria-hidden="true">
-    <div class="modal-panel">
-      <div class="modal-head">
-        <div>
-          <div class="modal-kicker">최근 기록 상세</div>
-          <h3 class="modal-title" id="detailModalTitle">-</h3>
-        </div>
-        <button class="close-btn" id="detailCloseBtn" type="button">닫기</button>
-      </div>
-      <div class="modal-body" id="detailModalBody"></div>
-    </div>
-  </div>
-
-  <div class="modal" id="compareModal" aria-hidden="true">
-    <div class="modal-panel large">
-      <div class="modal-head">
-        <div>
-          <div class="modal-kicker">현재 입력 vs 이전 기록</div>
-          <h3 class="modal-title" id="compareModalTitle">비교 보기</h3>
-        </div>
-        <button class="close-btn" id="compareCloseBtn" type="button">닫기</button>
-      </div>
-      <div class="modal-body">
-        <div class="notice" id="compareSummaryNote">-</div>
-        <div style="height:12px"></div>
-        <div class="compare-table" id="compareTable"></div>
-      </div>
-    </div>
+    <div class="footer-note">GitHub Pages용 static HTML · Firebase 연결 전에도 사용 가능</div>
   </div>
 
   <script type="module">
-    import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
-    import {
-      getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs
-    } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
-
-    const DEFAULT_FIREBASE_CONFIG_TEXT = `{
-  "apiKey": "AIzaSyB-iWsEfB2nfFdqgZTnOzFErA-CR7UYUWU",
-  "authDomain": "cocodekang-pt.firebaseapp.com",
-  "projectId": "cocodekang-pt",
-  "storageBucket": "cocodekang-pt.firebasestorage.app",
-  "messagingSenderId": "186879142379",
-  "appId": "1:186879142379:web:76d5e07a9e8f4e0f09d1ae",
-  "measurementId": "G-4B3XC08BR4"
-}`;
+    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
     const INITIAL_DATA = [
       {"id":"2026-02-05","date":"2026-02-05","running":null,"rounds":[{"squat":70,"pullup":3,"dips":20,"pushup":40,"plank":75,"round":1}]},
@@ -488,9 +749,8 @@
       {"id":"2026-03-16","date":"2026-03-16","running":60,"rounds":[{"squat":75,"pullup":8,"dips":19,"pushup":50,"plank":120,"deadhang":25,"negpull":7,"round":1}]}
     ];
 
-    const STORAGE_KEY = 'workout-manager-v3';
-    const CONFIG_KEY = 'workout-manager-firebase-config-v3';
-    const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+    const STORAGE_KEY = 'workout-manager-v2';
+    const CONFIG_KEY = 'workout-manager-firebase-config';
 
     const EXERCISES = [
       { key: 'squat', label: '스쿼트' },
@@ -499,7 +759,7 @@
       { key: 'pushup', label: '팔굽혀' },
       { key: 'plank', label: '플랭크(초)' },
       { key: 'deadhang', label: '데드행(초)' },
-      { key: 'negpull', label: '네거티브' },
+      { key: 'negpull', label: '턱걸네' },
     ];
 
     const el = (id) => document.getElementById(id);
@@ -509,30 +769,21 @@
     const syncDot = el('syncDot');
     const syncText = el('syncText');
     const lastSync = el('lastSync');
-    const detailModal = el('detailModal');
-    const detailModalTitle = el('detailModalTitle');
-    const detailModalBody = el('detailModalBody');
-    const compareModal = el('compareModal');
-    const compareModalTitle = el('compareModalTitle');
-    const compareSummaryNote = el('compareSummaryNote');
-    const compareTable = el('compareTable');
-    const autosaveStatus = el('autosaveStatus');
-    const dateDisplayText = el('dateDisplayText');
+    const compareRecordSelect = el('compareRecordSelect');
+    const compareTableBody = el('compareTableBody');
+    const compareMeta = el('compareMeta');
+    const compareCurrentDate = el('compareCurrentDate');
 
     let state = {
       records: [],
       currentEditId: null,
       roundCount: 3,
-      autosaveTimer: null,
-      lastAutoSavedHash: '',
-      lastAutoSavedId: '',
-      didInitialCloudFormSync: false,
+      compareTargetId: null,
       cloud: {
         enabled: false,
         app: null,
         db: null,
         unsubscribe: null,
-        isApplyingSnapshot: false,
       }
     };
 
@@ -545,38 +796,45 @@
       return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
     }
 
-    function todayLocalString() {
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-
     function parseNum(v) {
       if (v === '' || v === null || v === undefined) return null;
       const n = Number(v);
       return Number.isFinite(n) ? n : null;
     }
 
+
+    function formatDiff(value) {
+      if (!Number.isFinite(value) || value === 0) return `<span class="diff-zero">0</span>`;
+      if (value > 0) return `<span class="diff-pos">+${value}</span>`;
+      return `<span class="diff-neg">${value}</span>`;
+    }
+
+    function readDraftForm() {
+      const date = el('dateInput').value || new Date().toISOString().slice(0, 10);
+      const rounds = [];
+      for (let i = 1; i <= state.roundCount; i++) {
+        const obj = { round: i };
+        let hasValue = false;
+        for (const item of EXERCISES) {
+          const input = el(`${item.key}_${i}`);
+          const v = input ? parseNum(input.value) : null;
+          if (v !== null) {
+            obj[item.key] = v;
+            hasValue = true;
+          }
+        }
+        if (hasValue) rounds.push(obj);
+      }
+      return {
+        id: date,
+        date,
+        running: parseNum(el('runningInput').value),
+        rounds,
+      };
+    }
+
     function sortRecords(arr) {
       return [...arr].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-    }
-
-    function formatDateDisplay(dateStr) {
-      if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr || '-';
-      const d = new Date(`${dateStr}T00:00:00`);
-      return `${dateStr}(${WEEKDAYS[d.getDay()]})`;
-    }
-
-    function setDateDisplayText(dateStr = el('dateInput')?.value) {
-      if (dateDisplayText) dateDisplayText.textContent = formatDateDisplay(dateStr || todayLocalString());
-    }
-
-    function setAutosaveStatus(text, tone = 'idle') {
-      if (!autosaveStatus) return;
-      autosaveStatus.textContent = text;
-      autosaveStatus.dataset.tone = tone;
     }
 
     function saveLocal() {
@@ -599,144 +857,45 @@
       }
     }
 
-    function setSiteTitle(title) {
-      const safeTitle = title?.trim() || '운동관리 사이트';
-      document.title = safeTitle;
-      document.querySelector('h1').textContent = safeTitle;
-    }
-
-    function getConfigPayload() {
-      return {
+    function saveConfig() {
+      const payload = {
         firebaseConfigText: el('firebaseConfigInput').value.trim(),
         collectionPath: el('collectionPathInput').value.trim() || 'workoutRecords',
         siteTitle: el('siteTitleInput').value.trim() || '운동관리 사이트',
       };
-    }
-
-    function saveConfig(showAlert = true) {
-      const payload = getConfigPayload();
       localStorage.setItem(CONFIG_KEY, JSON.stringify(payload));
-      setSiteTitle(payload.siteTitle);
-      if (showAlert) alert('Firebase 설정을 저장했습니다.');
+      document.title = payload.siteTitle;
+      document.querySelector('h1').textContent = payload.siteTitle;
+      alert('Firebase 설정을 저장했습니다.');
     }
 
     function loadConfig() {
       const raw = localStorage.getItem(CONFIG_KEY);
-      if (!raw) {
-        el('firebaseConfigInput').value = DEFAULT_FIREBASE_CONFIG_TEXT;
-        el('collectionPathInput').value = 'workoutRecords';
-        el('siteTitleInput').value = '운동관리 사이트';
-        setSiteTitle('운동관리 사이트');
-        return;
-      }
+      if (!raw) return;
       try {
         const cfg = JSON.parse(raw);
-        el('firebaseConfigInput').value = cfg.firebaseConfigText || DEFAULT_FIREBASE_CONFIG_TEXT;
+        el('firebaseConfigInput').value = cfg.firebaseConfigText || '';
         el('collectionPathInput').value = cfg.collectionPath || 'workoutRecords';
         el('siteTitleInput').value = cfg.siteTitle || '운동관리 사이트';
-        setSiteTitle(cfg.siteTitle || '운동관리 사이트');
-      } catch (e) {
-        el('firebaseConfigInput').value = DEFAULT_FIREBASE_CONFIG_TEXT;
-        el('collectionPathInput').value = 'workoutRecords';
-        el('siteTitleInput').value = '운동관리 사이트';
-        setSiteTitle('운동관리 사이트');
-      }
+        document.title = cfg.siteTitle || '운동관리 사이트';
+        document.querySelector('h1').textContent = cfg.siteTitle || '운동관리 사이트';
+      } catch (e) {}
     }
 
     function clearConfig() {
       localStorage.removeItem(CONFIG_KEY);
-      el('firebaseConfigInput').value = DEFAULT_FIREBASE_CONFIG_TEXT;
+      el('firebaseConfigInput').value = '';
       el('collectionPathInput').value = 'workoutRecords';
       el('siteTitleInput').value = '운동관리 사이트';
-      setSiteTitle('운동관리 사이트');
       alert('저장된 Firebase 설정을 삭제했습니다.');
     }
 
     function setSyncStatus(mode, text) {
       syncDot.className = 'dot';
-      syncDot.classList.add(mode === 'cloud' ? 'online' : 'local');
+      if (mode === 'cloud') syncDot.classList.add('online');
+      else syncDot.classList.add('local');
       syncText.textContent = text;
       lastSync.textContent = nowTime();
-    }
-
-    
-    function snapshotCurrentFormValues() {
-      const values = {
-        date: el('dateInput').value,
-        running: el('runningInput').value,
-        rounds: []
-      };
-      for (let i = 1; i <= state.roundCount; i++) {
-        const roundObj = {};
-        for (const item of EXERCISES) {
-          const target = el(`${item.key}_${i}`);
-          roundObj[item.key] = target ? target.value : '';
-        }
-        values.rounds.push(roundObj);
-      }
-      return values;
-    }
-
-    function applyFormValues(values) {
-      if (!values) return;
-      if (values.date !== undefined) el('dateInput').value = values.date || '';
-      if (values.running !== undefined) el('runningInput').value = values.running || '';
-      (values.rounds || []).forEach((round, idx) => {
-        const i = idx + 1;
-        for (const item of EXERCISES) {
-          const target = el(`${item.key}_${i}`);
-          if (target) target.value = round[item.key] ?? '';
-        }
-      });
-      setDateDisplayText(values.date || el('dateInput').value);
-    }
-
-    function getFieldSequence() {
-      const seq = [el('dateInput'), el('runningInput')];
-      for (let i = 1; i <= state.roundCount; i++) {
-        for (const item of EXERCISES) {
-          const target = el(`${item.key}_${i}`);
-          if (target) seq.push(target);
-        }
-      }
-      return seq.filter(Boolean);
-    }
-
-    function focusNextField(current) {
-      const seq = getFieldSequence();
-      const idx = seq.indexOf(current);
-      if (idx >= 0 && idx < seq.length - 1) seq[idx + 1].focus();
-    }
-
-    function bindFormFieldEvents() {
-      const formInputs = [el('dateInput'), el('runningInput'), ...roundsWrap.querySelectorAll('input')].filter(Boolean);
-      formInputs.forEach((input) => {
-        if (input.dataset.bound === '1') return;
-        input.dataset.bound = '1';
-
-        if (input.type === 'number') {
-          input.setAttribute('inputmode', 'numeric');
-          input.setAttribute('enterkeyhint', 'next');
-          input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              focusNextField(input);
-              triggerAutoSave({ silent: true });
-            }
-          });
-          input.addEventListener('input', () => {
-            setAutosaveStatus('입력 중 · 자동 저장 대기', 'pending');
-            scheduleAutoSave();
-          });
-          input.addEventListener('blur', () => triggerAutoSave({ silent: true }));
-          input.addEventListener('change', () => triggerAutoSave({ silent: true }));
-        } else if (input.id === 'dateInput') {
-          input.addEventListener('change', () => {
-            const targetDate = input.value || todayLocalString();
-            loadRecordForDate(targetDate, { scroll: false, announce: true });
-          });
-        }
-      });
     }
 
     function createRoundCard(idx) {
@@ -747,7 +906,7 @@
       const fields = EXERCISES.map(item => `
         <div>
           <label class="label" for="${item.key}_${idx}">${item.label}</label>
-          <input type="number" min="0" step="1" id="${item.key}_${idx}" data-round="${idx}" data-key="${item.key}" placeholder="0" inputmode="numeric" enterkeyhint="next" />
+          <input type="number" min="0" step="1" id="${item.key}_${idx}" data-round="${idx}" data-key="${item.key}" placeholder="0" />
         </div>
       `).join('');
 
@@ -761,35 +920,24 @@
       return wrap;
     }
 
-    function renderRoundInputs(preservedValues = null) {
+    function renderRoundInputs() {
       roundsWrap.innerHTML = '';
       for (let i = 1; i <= state.roundCount; i++) roundsWrap.appendChild(createRoundCard(i));
-      if (preservedValues) applyFormValues(preservedValues);
-      bindFormFieldEvents();
     }
 
-    function hasRecordContent(record) {
-      if (!record) return false;
-      if (record.running !== null && record.running !== undefined) return true;
-      return Array.isArray(record.rounds) && record.rounds.length > 0;
-    }
-
-    function clearForm(dateStr = todayLocalString()) {
-      state.currentEditId = dateStr;
-      state.lastAutoSavedId = dateStr;
-      state.lastAutoSavedHash = '';
-      el('dateInput').value = dateStr;
+    function clearForm() {
+      state.currentEditId = null;
+      el('dateInput').value = new Date().toISOString().slice(0, 10);
       el('runningInput').value = '';
       state.roundCount = 3;
       renderRoundInputs();
-      setDateDisplayText(dateStr);
-      setAutosaveStatus(`${formatDateDisplay(dateStr)} 입력 준비 완료`, 'idle');
+      renderCompare();
     }
 
-    function readForm({ silent = false } = {}) {
-      const date = el('dateInput').value || todayLocalString();
+    function readForm() {
+      const date = el('dateInput').value;
       if (!date) {
-        if (!silent) alert('날짜를 입력하세요.');
+        alert('날짜를 입력하세요.');
         return null;
       }
       const rounds = [];
@@ -797,8 +945,7 @@
         const obj = { round: i };
         let hasValue = false;
         for (const item of EXERCISES) {
-          const inputEl = el(`${item.key}_${i}`);
-          const v = parseNum(inputEl?.value);
+          const v = parseNum(el(`${item.key}_${i}`).value);
           if (v !== null) {
             obj[item.key] = v;
             hasValue = true;
@@ -814,11 +961,7 @@
       };
     }
 
-    function fillForm(record, { scroll = false, announce = false } = {}) {
-      if (!record) {
-        clearForm(todayLocalString());
-        return;
-      }
+    function fillForm(record) {
       state.currentEditId = record.id;
       el('dateInput').value = record.date;
       el('runningInput').value = record.running ?? '';
@@ -830,45 +973,8 @@
           if (target) target.value = round[item.key] ?? '';
         }
       });
-      setDateDisplayText(record.date);
-      state.lastAutoSavedId = record.id;
-      state.lastAutoSavedHash = JSON.stringify(record);
-      if (announce) setAutosaveStatus(`${formatDateDisplay(record.date)} 기록을 불러왔습니다.`, 'idle');
-      if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function loadRecordForDate(dateStr, { scroll = false, announce = false } = {}) {
-      const targetDate = dateStr || todayLocalString();
-      const record = state.records.find(r => r.id === targetDate);
-      if (record) fillForm(record, { scroll, announce });
-      else clearForm(targetDate);
-    }
-
-    function scheduleAutoSave() {
-      clearTimeout(state.autosaveTimer);
-      state.autosaveTimer = setTimeout(() => {
-        triggerAutoSave({ silent: true });
-      }, 500);
-    }
-
-    async function triggerAutoSave({ silent = true } = {}) {
-      clearTimeout(state.autosaveTimer);
-      const record = readForm({ silent });
-      if (!record) return;
-      if (!hasRecordContent(record)) {
-        setAutosaveStatus(`${formatDateDisplay(record.date)} 입력 대기 중`, 'idle');
-        return;
-      }
-      const hash = JSON.stringify(record);
-      if (state.lastAutoSavedId === record.id && state.lastAutoSavedHash === hash) {
-        setAutosaveStatus(`${formatDateDisplay(record.date)} 자동 저장됨 · ${nowTime()}`, 'saved');
-        return;
-      }
-      await upsertRecord(record);
-      state.lastAutoSavedId = record.id;
-      state.lastAutoSavedHash = hash;
-      state.currentEditId = record.id;
-      setAutosaveStatus(`${formatDateDisplay(record.date)} 자동 저장됨 · ${nowTime()}`, 'saved');
+      renderCompare();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function summarizeRecord(record) {
@@ -883,150 +989,9 @@
     }
 
     function formatMetric(key, value) {
-      return String(value || 0);
-    }
-
-    function openDetailModal(recordId) {
-      const record = state.records.find(r => r.id === recordId);
-      if (!record) return;
-      const sums = summarizeRecord(record);
-      detailModalTitle.textContent = formatDateDisplay(record.date);
-      detailModalBody.innerHTML = `
-        <div class="detail-grid">
-          <div class="mini"><div class="k">날짜</div><div class="v">${formatDateDisplay(record.date)}</div></div>
-          <div class="mini"><div class="k">러닝</div><div class="v">${record.running ?? 0}초</div></div>
-          <div class="mini"><div class="k">라운드 수</div><div class="v">${record.rounds?.length || 0}개</div></div>
-        </div>
-
-        <div class="detail-section">
-          <h4>합계</h4>
-          <div class="record-grid">
-            ${EXERCISES.map(item => `
-              <div class="mini">
-                <div class="k">${item.label}</div>
-                <div class="v">${formatMetric(item.key, sums[item.key])}</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-
-        <div class="detail-section">
-          <h4>라운드별 상세</h4>
-          <div class="detail-rounds">
-            ${(record.rounds || []).map((round, idx) => `
-              <div class="detail-round">
-                <div class="detail-round-head">
-                  <strong>라운드 ${round.round ?? idx + 1}</strong>
-                  <span class="tag">${formatDateDisplay(record.date)}</span>
-                </div>
-                <div class="record-grid">
-                  ${EXERCISES.map(item => `
-                    <div class="mini">
-                      <div class="k">${item.label}</div>
-                      <div class="v">${round[item.key] ?? 0}</div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            `).join('') || '<div class="empty">상세 라운드가 없습니다.</div>'}
-          </div>
-        </div>
-      `;
-      detailModal.classList.add('open');
-      detailModal.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeDetailModal() {
-      detailModal.classList.remove('open');
-      detailModal.setAttribute('aria-hidden', 'true');
-    }
-
-    function buildCompareData() {
-      const current = readForm({ silent: true }) || { date: el('dateInput').value || todayLocalString(), rounds: [], running: null };
-      const currentSums = summarizeRecord(current);
-      const compareItems = [...EXERCISES, { key: 'running', label: '러닝(초)' }];
-      const previousRecords = state.records.filter(r => r.id !== current.date);
-      const previousTotals = {};
-      const previousCounts = {};
-      const previousBests = {};
-      compareItems.forEach(item => {
-        previousTotals[item.key] = 0;
-        previousCounts[item.key] = 0;
-        previousBests[item.key] = 0;
-      });
-
-      previousRecords.forEach(record => {
-        const sums = summarizeRecord(record);
-        compareItems.forEach(item => {
-          const value = item.key === 'running' ? Number(record.running || 0) : Number(sums[item.key] || 0);
-          previousBests[item.key] = Math.max(previousBests[item.key], value);
-          if (value > 0) {
-            previousTotals[item.key] += value;
-            previousCounts[item.key] += 1;
-          }
-        });
-      });
-
-      return {
-        current,
-        currentSums,
-        previousRecordsCount: previousRecords.length,
-        rows: compareItems.map(item => {
-          const currentValue = item.key === 'running' ? Number(current.running || 0) : Number(currentSums[item.key] || 0);
-          const avgValue = previousCounts[item.key] ? Number((previousTotals[item.key] / previousCounts[item.key]).toFixed(1)) : 0;
-          const bestValue = previousBests[item.key] || 0;
-          const maxValue = Math.max(currentValue, avgValue, bestValue, 1);
-          return {
-            key: item.key,
-            label: item.label,
-            currentValue,
-            avgValue,
-            bestValue,
-            avgDiff: Number((currentValue - avgValue).toFixed(1)),
-            bestDiff: Number((currentValue - bestValue).toFixed(1)),
-            currentWidth: Math.max(4, Math.round((currentValue / maxValue) * 100)),
-            avgWidth: Math.max(4, Math.round((avgValue / maxValue) * 100)),
-            bestWidth: Math.max(4, Math.round((bestValue / maxValue) * 100)),
-          };
-        })
-      };
-    }
-
-    function openCompareModal() {
-      const data = buildCompareData();
-      const currentDateLabel = formatDateDisplay(data.current.date || todayLocalString());
-      compareModalTitle.textContent = `${currentDateLabel} 현재 입력 비교`;
-      compareSummaryNote.textContent = data.previousRecordsCount
-        ? `현재 입력과 이전 ${data.previousRecordsCount}개 기록의 평균·최고를 함께 비교합니다.`
-        : '이전 기록이 아직 없어서 현재 입력만 표시합니다.';
-
-      compareTable.innerHTML = data.rows.map(row => `
-        <div class="compare-row">
-          <div class="compare-row-top">
-            <div class="compare-name">${row.label}</div>
-            <div class="tiny-note">평균 차이 ${row.avgDiff > 0 ? '+' : ''}${row.avgDiff} · 최고 차이 ${row.bestDiff > 0 ? '+' : ''}${row.bestDiff}</div>
-          </div>
-          <div class="compare-values">
-            <div class="compare-box"><div class="k">현재</div><div class="v">${row.currentValue}</div></div>
-            <div class="compare-box"><div class="k">이전 평균</div><div class="v">${row.avgValue}</div></div>
-            <div class="compare-box"><div class="k">이전 최고</div><div class="v">${row.bestValue}</div></div>
-            <div class="compare-box"><div class="k">기준 날짜</div><div class="v">${currentDateLabel}</div></div>
-          </div>
-          <div class="bar-track"><div class="bar-stack"><div class="bar-current" style="width:${row.currentWidth}%"></div></div></div>
-          <div class="tiny-note" style="margin-top:6px;">파랑 현재</div>
-          <div class="bar-track"><div class="bar-stack"><div class="bar-average" style="width:${row.avgWidth}%"></div></div></div>
-          <div class="tiny-note" style="margin-top:6px;">초록 이전 평균</div>
-          <div class="bar-track"><div class="bar-stack"><div class="bar-best" style="width:${row.bestWidth}%"></div></div></div>
-          <div class="tiny-note" style="margin-top:6px;">주황 이전 최고</div>
-        </div>
-      `).join('');
-      compareModal.classList.add('open');
-      compareModal.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeCompareModal() {
-      compareModal.classList.remove('open');
-      compareModal.setAttribute('aria-hidden', 'true');
+      if (!value) return '0';
+      if (['plank', 'deadhang', 'running'].includes(key)) return `${value}`;
+      return `${value}`;
     }
 
     function renderRecords() {
@@ -1044,11 +1009,11 @@
         box.innerHTML = `
           <div class="record-top">
             <div>
-              <div class="record-date">${formatDateDisplay(record.date)}</div>
+              <div class="record-date">${record.date}</div>
               <div class="card-desc">라운드 ${(record.rounds || []).length}개${record.running ? ` · 러닝 ${record.running}초` : ''}</div>
             </div>
             <div class="record-actions">
-              <button class="btn-ghost" data-detail="${record.id}">상세기록 확인</button>
+              <button class="btn-ghost" data-edit="${record.id}">수정</button>
               <button class="btn-danger" data-delete="${record.id}">삭제</button>
             </div>
           </div>
@@ -1064,19 +1029,82 @@
         recordsEl.appendChild(box);
       }
 
-      recordsEl.querySelectorAll('[data-detail]').forEach(btn => {
-        btn.addEventListener('click', () => openDetailModal(btn.dataset.detail));
+      recordsEl.querySelectorAll('[data-edit]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const record = state.records.find(r => r.id === btn.dataset.edit);
+          if (record) fillForm(record);
+        });
       });
       recordsEl.querySelectorAll('[data-delete]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.dataset.delete;
-          if (!confirm(`${formatDateDisplay(id)} 기록을 삭제할까요?`)) return;
+          if (!confirm(`${id} 기록을 삭제할까요?`)) return;
           await removeRecord(id);
-          if ((el('dateInput').value || todayLocalString()) === id) loadRecordForDate(todayLocalString(), { announce: true });
         });
       });
     }
 
+
+    function renderCompare() {
+      const list = sortRecords(state.records);
+      compareCurrentDate.value = el('dateInput').value || new Date().toISOString().slice(0, 10);
+
+      if (!list.length) {
+        compareRecordSelect.innerHTML = '<option value="">기록 없음</option>';
+        compareTableBody.innerHTML = '<tr><td colspan="4">비교할 저장 기록이 없습니다.</td></tr>';
+        compareMeta.innerHTML = '<span class="compare-badge">기준 기록 없음</span>';
+        return;
+      }
+
+      if (!state.compareTargetId || !list.some(record => record.id === state.compareTargetId)) {
+        state.compareTargetId = list[0].id;
+      }
+
+      compareRecordSelect.innerHTML = list.map(record => `
+        <option value="${record.id}" ${record.id === state.compareTargetId ? 'selected' : ''}>${record.date}</option>
+      `).join('');
+
+      const baseRecord = list.find(record => record.id === state.compareTargetId) || list[0];
+      const currentRecord = readDraftForm();
+      const baseSums = summarizeRecord(baseRecord);
+      const currentSums = summarizeRecord(currentRecord);
+
+      compareMeta.innerHTML = `
+        <span class="compare-badge">기준 날짜 ${baseRecord.date}</span>
+        <span class="compare-badge">기준 라운드 ${(baseRecord.rounds || []).length}개</span>
+        <span class="compare-badge">현재 라운드 ${(currentRecord.rounds || []).length}개</span>
+      `;
+
+      const rows = [
+        {
+          label: '러닝(초)',
+          base: Number(baseRecord.running || 0),
+          current: Number(currentRecord.running || 0),
+        },
+        {
+          label: '라운드 수',
+          base: Number((baseRecord.rounds || []).length),
+          current: Number((currentRecord.rounds || []).length),
+        },
+        ...EXERCISES.map(item => ({
+          label: item.label,
+          base: Number(baseSums[item.key] || 0),
+          current: Number(currentSums[item.key] || 0),
+        })),
+      ];
+
+      compareTableBody.innerHTML = rows.map(row => {
+        const diff = row.current - row.base;
+        return `
+          <tr>
+            <td>${row.label}</td>
+            <td>${row.base}</td>
+            <td>${row.current}</td>
+            <td>${formatDiff(diff)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
 
     function drawSparkline(svgId, values, color = '#60a5fa') {
       const svg = el(svgId);
@@ -1091,11 +1119,13 @@
       const min = Math.min(...values, 0);
       const span = Math.max(max - min, 1);
       const step = values.length === 1 ? width : width / (values.length - 1);
+
       const points = values.map((v, i) => {
         const x = i * step;
         const y = height - ((v - min) / span) * (height - 20) - 10;
         return `${x},${y}`;
       }).join(' ');
+
       const pathParts = values.map((v, i) => {
         const x = i * step;
         const y = height - ((v - min) / span) * (height - 20) - 10;
@@ -1127,7 +1157,7 @@
 
       el('mDays').textContent = list.length;
       el('mRounds').textContent = totalRounds;
-      el('mRecent').textContent = list[0]?.date ? formatDateDisplay(list[0].date) : '-';
+      el('mRecent').textContent = list[0]?.date || '-';
       el('mRunning').textContent = totalRunning;
 
       const bests = {};
@@ -1175,11 +1205,6 @@
       }).join('');
     }
 
-    function renderAll() {
-      renderRecords();
-      renderDashboard();
-    }
-
     async function upsertRecord(record) {
       state.records = sortRecords([...state.records.filter(r => r.id !== record.id), record]);
       saveLocal();
@@ -1204,47 +1229,19 @@
       }
     }
 
-    function parseFirebaseConfig(text) {
-      if (!text.trim()) throw new Error('empty');
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        try {
-          return Function(`"use strict"; return (${text});`)();
-        } catch (e2) {
-          throw new Error('invalid-config');
-        }
-      }
-    }
-
-    async function pushLocalToCloud(showAlert = true) {
-      if (!(state.cloud.enabled && state.cloud.db)) {
-        if (showAlert) alert('먼저 Firebase가 연결되어야 합니다.');
-        return;
-      }
-      const path = el('collectionPathInput').value.trim() || 'workoutRecords';
-      for (const record of state.records) {
-        await setDoc(doc(collection(state.cloud.db, path), record.id), record);
-      }
-      setSyncStatus('cloud', 'Firebase 실시간 연결 중');
-      if (showAlert) alert('현재 로컬 기록을 Firebase에 업로드했습니다.');
-    }
-
-    async function connectFirebase({silent = false} = {}) {
+    async function connectFirebase() {
       const raw = el('firebaseConfigInput').value.trim();
       const path = el('collectionPathInput').value.trim() || 'workoutRecords';
       if (!raw) {
-        if (!silent) alert('firebaseConfig를 먼저 입력하세요.');
-        setSyncStatus('local', '로컬 모드');
+        alert('firebaseConfig JSON을 먼저 넣어주세요.');
         return;
       }
 
       let config;
       try {
-        config = parseFirebaseConfig(raw);
+        config = JSON.parse(raw);
       } catch (e) {
-        if (!silent) alert('firebaseConfig 형식이 올바르지 않습니다.');
-        setSyncStatus('local', '로컬 모드');
+        alert('firebaseConfig JSON 형식이 올바르지 않습니다.');
         return;
       }
 
@@ -1254,7 +1251,7 @@
           state.cloud.unsubscribe = null;
         }
 
-        const app = getApps().length ? getApp() : initializeApp(config);
+        const app = getApps().length ? getApps()[0] : initializeApp(config);
         const db = getFirestore(app);
 
         state.cloud.app = app;
@@ -1262,130 +1259,41 @@
         state.cloud.enabled = true;
 
         const q = query(collection(db, path), orderBy('date', 'desc'));
-
-        state.cloud.unsubscribe = onSnapshot(q, async (snap) => {
+        state.cloud.unsubscribe = onSnapshot(q, (snap) => {
           const items = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-          if (items.length === 0 && state.records.length > 0) {
-            await pushLocalToCloud(false);
-            return;
-          }
           state.records = sortRecords(items);
           saveLocal();
           renderAll();
-          if (!state.didInitialCloudFormSync) {
-            loadRecordForDate(el('dateInput')?.value || todayLocalString(), { scroll: false, announce: false });
-            state.didInitialCloudFormSync = true;
-          }
           setSyncStatus('cloud', 'Firebase 실시간 연결 중');
         }, (error) => {
           console.error(error);
-          disconnectFirebase(false);
-          if (!silent) alert('Firebase 연결 오류입니다. Firestore 규칙과 컬렉션 경로를 확인하세요.');
+          setSyncStatus('local', '로컬 모드 (연결 오류)');
+          alert('Firebase 연결 중 오류가 발생했습니다. Firestore 규칙과 컬렉션 경로를 확인하세요.');
         });
 
         setSyncStatus('cloud', 'Firebase 연결 중');
       } catch (error) {
         console.error(error);
-        disconnectFirebase(false);
-        if (!silent) alert('Firebase 초기화에 실패했습니다.');
+        alert('Firebase 초기화에 실패했습니다. 설정값을 확인하세요.');
       }
     }
 
-    function disconnectFirebase(showRender = true) {
+    function disconnectFirebase() {
       if (state.cloud.unsubscribe) state.cloud.unsubscribe();
       state.cloud.unsubscribe = null;
       state.cloud.enabled = false;
       state.cloud.db = null;
       setSyncStatus('local', '로컬 모드');
-      if (showRender) renderAll();
+      renderAll();
     }
 
     function exportJson() {
       const blob = new Blob([JSON.stringify(state.records, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `운동기록_${todayLocalString()}.json`;
+      a.download = `운동기록_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
       URL.revokeObjectURL(a.href);
-    }
-
-    function buildExcelSheets() {
-      const wideRows = [];
-      const roundRows = [];
-      const summaryRows = [];
-
-      for (const record of sortRecords(state.records)) {
-        const sums = summarizeRecord(record);
-        const row = {
-          id: record.id,
-          날짜: record.date,
-          날짜표시: formatDateDisplay(record.date),
-          러닝초: record.running ?? '',
-          라운드수: record.rounds?.length || 0
-        };
-        EXERCISES.forEach(item => row[`${item.label}_합계`] = sums[item.key] || 0);
-        wideRows.push(row);
-
-        (record.rounds || []).forEach(round => {
-          const rr = {
-            id: record.id,
-            날짜: record.date,
-            날짜표시: formatDateDisplay(record.date),
-            라운드: round.round ?? ''
-          };
-          EXERCISES.forEach(item => rr[item.label] = round[item.key] ?? '');
-          roundRows.push(rr);
-        });
-      }
-
-      const bests = {};
-      const totals = {};
-      const counts = {};
-      EXERCISES.forEach(item => {
-        bests[item.key] = 0;
-        totals[item.key] = 0;
-        counts[item.key] = 0;
-      });
-
-      state.records.forEach(record => {
-        const sums = summarizeRecord(record);
-        EXERCISES.forEach(item => {
-          const value = sums[item.key] || 0;
-          bests[item.key] = Math.max(bests[item.key], value);
-          if (value > 0) {
-            totals[item.key] += value;
-            counts[item.key] += 1;
-          }
-        });
-      });
-
-      EXERCISES.forEach(item => {
-        summaryRows.push({
-          항목: item.label,
-          최고기록: bests[item.key] || 0,
-          평균기록: counts[item.key] ? Number((totals[item.key] / counts[item.key]).toFixed(1)) : 0
-        });
-      });
-
-      return { wideRows, roundRows, summaryRows };
-    }
-
-    function exportExcel() {
-      if (!window.XLSX) {
-        alert('엑셀 라이브러리를 불러오지 못했습니다.');
-        return;
-      }
-      const { wideRows, roundRows, summaryRows } = buildExcelSheets();
-      const wb = XLSX.utils.book_new();
-      const ws1 = XLSX.utils.json_to_sheet(wideRows);
-      const ws2 = XLSX.utils.json_to_sheet(roundRows);
-      const ws3 = XLSX.utils.json_to_sheet(summaryRows);
-
-      XLSX.utils.book_append_sheet(wb, ws1, '기록요약');
-      XLSX.utils.book_append_sheet(wb, ws2, '라운드상세');
-      XLSX.utils.book_append_sheet(wb, ws3, '최고기록');
-
-      XLSX.writeFileXLSX(wb, `운동기록_${todayLocalString()}.xlsx`);
     }
 
     function importJson(file) {
@@ -1397,7 +1305,11 @@
           state.records = sortRecords(parsed);
           saveLocal();
           renderAll();
-          if (state.cloud.enabled && state.cloud.db) await pushLocalToCloud(false);
+          if (state.cloud.enabled && state.cloud.db) {
+            for (const record of state.records) {
+              await setDoc(doc(collection(state.cloud.db, el('collectionPathInput').value.trim() || 'workoutRecords'), record.id), record);
+            }
+          }
           alert('JSON 복원이 완료되었습니다.');
         } catch (e) {
           alert('JSON 파일 형식이 올바르지 않습니다.');
@@ -1406,98 +1318,75 @@
       reader.readAsText(file);
     }
 
-    
     function bindEvents() {
-      el('newBtn').addEventListener('click', () => {
-        loadRecordForDate(todayLocalString(), { scroll: true, announce: true });
-      });
-
+      el('newBtn').addEventListener('click', clearForm);
       el('addRoundBtn').addEventListener('click', () => {
-        const preserved = snapshotCurrentFormValues();
         state.roundCount += 1;
-        renderRoundInputs(preserved);
-        setAutosaveStatus('라운드가 추가되었습니다. 자동 저장 대기', 'pending');
-        scheduleAutoSave();
+        renderRoundInputs();
+        renderCompare();
       });
-
       el('removeRoundBtn').addEventListener('click', () => {
         if (state.roundCount <= 1) return;
-        const preserved = snapshotCurrentFormValues();
-        preserved.rounds = preserved.rounds.slice(0, -1);
         state.roundCount -= 1;
-        renderRoundInputs(preserved);
-        setAutosaveStatus('라운드가 삭제되었습니다. 자동 저장 대기', 'pending');
-        scheduleAutoSave();
+        renderRoundInputs();
+        renderCompare();
+      });
+
+      compareRecordSelect.addEventListener('change', () => {
+        state.compareTargetId = compareRecordSelect.value || null;
+        renderCompare();
+      });
+
+      document.addEventListener('input', (e) => {
+        if (e.target.matches('#dateInput, #runningInput, #roundsWrap input')) {
+          renderCompare();
+        }
       });
 
       el('saveBtn').addEventListener('click', async () => {
-        const record = readForm({ silent: false });
+        const record = readForm();
         if (!record) return;
-        if (!hasRecordContent(record)) {
-          alert('입력된 운동 기록이 없습니다.');
-          return;
-        }
         await upsertRecord(record);
-        state.lastAutoSavedId = record.id;
-        state.lastAutoSavedHash = JSON.stringify(record);
-        setAutosaveStatus(`${formatDateDisplay(record.date)} 수동 저장 완료`, 'saved');
         alert('저장했습니다.');
       });
 
-      el('compareBtn').addEventListener('click', openCompareModal);
-      el('detailCloseBtn').addEventListener('click', closeDetailModal);
-      el('compareCloseBtn').addEventListener('click', closeCompareModal);
-      detailModal.addEventListener('click', (e) => { if (e.target === detailModal) closeDetailModal(); });
-      compareModal.addEventListener('click', (e) => { if (e.target === compareModal) closeCompareModal(); });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeDetailModal();
-          closeCompareModal();
-        }
+      el('toggleConfigBtn').addEventListener('click', () => {
+        configArea.classList.toggle('open');
       });
-
-      el('toggleConfigBtn').addEventListener('click', () => configArea.classList.toggle('open'));
-      el('saveConfigBtn').addEventListener('click', async () => {
-        saveConfig();
-        await connectFirebase();
-      });
+      el('saveConfigBtn').addEventListener('click', saveConfig);
       el('clearConfigBtn').addEventListener('click', clearConfig);
-      el('connectBtn').addEventListener('click', () => connectFirebase());
-      el('disconnectBtn').addEventListener('click', () => disconnectFirebase(true));
-      el('pushCloudBtn').addEventListener('click', () => pushLocalToCloud(true));
-      el('exportJsonBtn').addEventListener('click', exportJson);
-      el('exportExcelBtn').addEventListener('click', exportExcel);
-
+      el('connectBtn').addEventListener('click', connectFirebase);
+      el('disconnectBtn').addEventListener('click', disconnectFirebase);
+      el('exportBtn').addEventListener('click', exportJson);
       el('importInput').addEventListener('change', (e) => {
         const file = e.target.files?.[0];
         if (file) importJson(file);
         e.target.value = '';
       });
 
-      el('seedBtn').addEventListener('click', async () => {
-        if (!confirm('현재 기록을 초기 데이터로 덮어쓸까요?')) return;
+      el('seedBtn').addEventListener('click', () => {
+        if (!confirm('현재 로컬 기록을 초기 데이터로 덮어쓸까요?')) return;
         state.records = sortRecords(clone(INITIAL_DATA));
         saveLocal();
         renderAll();
-        loadRecordForDate(todayLocalString(), { announce: true });
-        if (state.cloud.enabled && state.cloud.db) await pushLocalToCloud(false);
         alert('초기 데이터를 다시 불러왔습니다.');
       });
-
-      el('siteTitleInput').addEventListener('input', (e) => setSiteTitle(e.target.value));
     }
 
-    async function init() {
+    function renderAll() {
+      renderRecords();
+      renderDashboard();
+      renderCompare();
+    }
+
+    function init() {
       loadConfig();
       loadLocal();
       renderRoundInputs();
+      clearForm();
       bindEvents();
       renderAll();
-      loadRecordForDate(todayLocalString(), { announce: true });
-      setSyncStatus('local', '자동 연결 시도 중');
-      await connectFirebase({silent: true});
-      if (!state.cloud.enabled) setSyncStatus('local', '로컬 모드');
+      setSyncStatus('local', '로컬 모드');
     }
 
     init();
